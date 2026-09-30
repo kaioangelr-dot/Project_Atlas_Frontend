@@ -1,0 +1,13 @@
+@import url("./vendor/normalize.css");
+@import url("./vendor/fonts.css");
+
+@import url("./variable.css");
+@import url("./components/App.css");
+@import url("./components/Preloader/preloader.css");
+@import url("./components/Header/header.css");
+@import url("./components/Navigation/navigation.css");
+@import url("./components/Sidebar/sidebar.css");
+@import url("./components/arrow.css");
+@import url("./components/Main/main.css");
+@import url("./components/About/about.css");
+@import url("./components/Footer/footer.css");

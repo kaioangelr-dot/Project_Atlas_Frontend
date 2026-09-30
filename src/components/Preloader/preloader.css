@@ -1,0 +1,46 @@
+.preloader-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  flex-direction: column;
+}
+
+.preloader-image {
+  align-self: center;
+  width: 400px;
+}
+
+.preloader-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+}
+
+/*
+Você junta as duas imagens do Atlas em um único arquivo (uma ao lado da outra, por exemplo atlas-sprite.png) e alterna a posição de fundo. 
+.atlas-spinner {
+  width: 64px; Largura de um frame
+  height: 64px; Altura do frame 
+  background-image: url("/atlas-sprite.png");
+  background-size: cover;
+
+  Alterna instantaneamente entre o frame 1 e o frame 2 
+  animation: flapWings 0.6s steps(1) infinite;
+}
+
+@keyframes flapWings {
+  0% {
+    background-position: 0px 0;
+  }  Frame 1: Asas levantadas 
+  50% {
+    background-position: -64px 0;
+  }  Frame 2: Asas abaixadas 
+} */

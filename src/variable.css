@@ -1,0 +1,23 @@
+:root {
+  /* 60% - Backgrounds principais e superfícies limpas */
+  --bg-main: #e6f7ff;
+  --bg-sky: url(./images/clouds2.png);
+  --text-primary: #141f30;
+  --text-muted: #657786;
+  --font-primary: "Inter", Arial, sans-serif;
+  --font-title: "Permanent Maker", Georgia, serif;
+
+  /* 30% - Estrutura de menus, bordas e navegação */
+  --sec-bg: #f7f9fc;
+  --border: #b3e5ff;
+  --color-active: #00c2ff;
+  --color-active-svg: invert(56%) sepia(87%) saturate(2250%) hue-rotate(164deg) brightness(101%) contrast(105%);
+  --color-active-shadow: #0099cc;
+
+  /* 10% - Botões de ação, pontos de interesse e gamificação */
+  --action-cta: #e61f35;
+  --action-cta-shadow: #b81426;
+
+  --action-success: #99e600;
+  --action-success-shadow: #7acc00;
+}

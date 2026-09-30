@@ -1,0 +1,104 @@
+.main {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  border-bottom: 2px solid var(--border);
+}
+
+.main::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: var(--bg-sky);
+  background-size: contain;
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.main__title {
+  font-family: var(--font-title);
+  font-size: 50px;
+  line-height: 1.2;
+  position: absolute;
+  top: 120px;
+  right: 50%;
+  transform: translateX(50%);
+  cursor: pointer;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.main__zoom {
+  position: absolute;
+  bottom: 10px;
+  right: 150px;
+  display: flex;
+  gap: 0 20px;
+  background-color: var(--sec-bg);
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  box-shadow: 3px 5px var(--border);
+}
+
+.main__zoom-btn {
+  background-color: var(--sec-bg);
+  width: 40px;
+  height: 40px;
+  border: var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 24px;
+  background-size: 15px;
+}
+
+.main__zoom-btn:hover {
+  scale: 1.1;
+}
+
+.main__zoom-btn_plus {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url("../../images/zoom-plus.svg");
+}
+
+.main__zoom-btn_plus:hover {
+  box-shadow: 3px 5px var(--border);
+}
+
+.main__zoom-btn_less {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url("../../images/zoom-less.svg");
+}
+
+.main__zoom-btn_less:hover {
+  box-shadow: -3px 5px var(--border);
+}
+
+@media screen and (max-width: 544px) {
+  .main::before {
+    object-fit: cover;
+  }
+
+  .main__title {
+    font-size: 30px;
+    top: 100px;
+  }
+
+  .main__zoom {
+    flex-direction: column;
+    bottom: 10px;
+    right: 3px;
+    gap: 0 20px;
+    width: 50px;
+    gap: 10px 0;
+  }
+
+  .main__zoom-btn_less:hover {
+    box-shadow: 3px 5px var(--border);
+  }
+}

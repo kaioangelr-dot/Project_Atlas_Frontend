@@ -1,0 +1,17 @@
+.arrow {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  position: absolute;
+  box-shadow: 3px 3px 5px var(--border);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  background: var(--sec-bg) url("../images/arrow.svg") no-repeat center / contain;
+  background-size: 10px;
+  transition: 0.2s ease;
+  opacity: 0.6;
+}
+
+.arrow:hover {
+  scale: 1.1;
+}

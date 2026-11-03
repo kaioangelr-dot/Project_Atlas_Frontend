@@ -1,12 +1,27 @@
 .about {
-  max-height: 500px;
+  height: 90vh;
   width: 100%;
-  background-color: var(--sec-bg);
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 80px;
   color: var(--text-primary);
+  padding-top: 160px;
+}
+
+.about::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: var(--bg-sky);
+  background-repeat: repeat;
+  background-size: fill;
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .about__image {
@@ -30,7 +45,16 @@
 
 @media screen and (max-width: 544px) {
   .about {
-    padding: 35px;
+    padding: 125px 20px 20px;
+  }
+
+  .about__image {
+    height: 110px;
+    width: 110px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    margin-bottom: 35px;
+    background-color: var(--bg-main);
   }
 
   .about__title {

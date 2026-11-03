@@ -1,40 +1,77 @@
 .sidebar {
-  min-height: 50%;
-  width: 80px;
-  padding: 35px 0;
-  display: flex;
-  justify-content: center;
-  background-color: none;
   position: absolute;
   left: 40px;
   top: 187px;
+  min-height: 50%;
+}
+
+.sidebar__map-tools {
+  height: 100%;
+  width: 80px;
+  padding: 35px 0;
+  gap: 15px 0;
+  display: none;
   border: 1px solid var(--border);
   border-radius: 20px;
   box-shadow: 0 3px 5px var(--border);
   background-color: var(--sec-bg);
-}
-
-.sidebar__map-tools {
-  min-height: 100%;
-  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   list-style-type: none;
 }
 
+.sidebar__map-tools_open {
+  display: flex;
+}
+
 .sidebar__tool {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
   cursor: pointer;
   transition: 0.2s ease;
 }
 
 .sidebar__image {
-  max-width: 40px;
+  width: 40px;
+}
+
+.sidebar__image_eraser {
+  width: 50px;
 }
 
 .sidebar__tool:hover {
   scale: 1.1;
   filter: var(--color-active-svg);
+}
+
+.sidebar__tool_active {
+  scale: 1.1;
+  filter: var(--color-active-svg);
+}
+
+.sidebar__brush-size {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-primary);
+  font-size: 11px;
+}
+
+.sidebar__brush-size input {
+  width: 58px;
+  margin: 0;
+  accent-color: var(--text-primary);
+  cursor: pointer;
+}
+
+.sidebar__brush-size output {
+  font-variant-numeric: tabular-nums;
 }
 
 .sidebar__arrow {
@@ -43,18 +80,49 @@
   top: 50%;
 }
 
+.sidebar__arrow_closed {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.sidebar__layers-tab {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  z-index: 3;
+  padding: 14px 9px;
+  border: 1px solid var(--border);
+  border-right: 0;
+  border-radius: 12px 0 0 12px;
+  background-color: var(--sec-bg);
+  box-shadow: 0 3px 5px var(--border);
+  color: var(--text-primary);
+  cursor: pointer;
+  writing-mode: vertical-rl;
+  transform: translateY(-50%);
+  transition: 0.2s ease;
+}
+
+.sidebar__layers-tab:hover,
+.sidebar__layers-tab_active {
+  color: var(--text-muted);
+  padding-right: 13px;
+}
+
 @media screen and (max-width: 544px) {
   .sidebar {
-    left: 6px;
-    width: 55px;
+    left: 11px;
     top: 110px;
   }
 
   .sidebar__map-tools {
-    max-width: 30px;
+    width: 55px;
   }
 
   .sidebar__image {
-    max-width: 30px;
+    width: 30px;
+  }
+
+  .sidebar__image_eraser {
+    width: 50px;
   }
 }

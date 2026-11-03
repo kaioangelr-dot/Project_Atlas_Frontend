@@ -1,20 +1,21 @@
 :root {
-  /* 60% - Backgrounds principais e superfícies limpas */
-  --bg-main: #e6f7ff;
+  /* 60% - Main backgrounds e clean surfaces */
+  --main-bg: #e6f7ff;
   --bg-sky: url(./images/clouds2.png);
-  --text-primary: #141f30;
+  --text-primary: black;
+  --text-sec: white;
   --text-muted: #657786;
   --font-primary: "Inter", Arial, sans-serif;
   --font-title: "Permanent Maker", Georgia, serif;
 
-  /* 30% - Estrutura de menus, bordas e navegação */
+  /* 30% - menus, borders and navigation */
   --sec-bg: #f7f9fc;
   --border: #b3e5ff;
   --color-active: #00c2ff;
   --color-active-svg: invert(56%) sepia(87%) saturate(2250%) hue-rotate(164deg) brightness(101%) contrast(105%);
   --color-active-shadow: #0099cc;
 
-  /* 10% - Botões de ação, pontos de interesse e gamificação */
+  /* 10% - Action btns, gamification, interest points */
   --action-cta: #e61f35;
   --action-cta-shadow: #b81426;
 

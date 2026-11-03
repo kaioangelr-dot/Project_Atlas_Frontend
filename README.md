@@ -1,19 +1,221 @@
-# React + Vite
+# Project Atlas
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<p align="center">
+  <img src="./src/images/atla-logo.png" alt="Project Atlas logo" width="240" />
+</p>
 
-Currently, two official plugins are available:
+**Project Atlas** is a browser-based editor for creating and exploring fictional maps. Draw places and paths, add labels and images, organize map elements into layers, and save your work through the maps API.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The Maps page includes a sample map named **Westeros**. It is a local example and does not need to be saved in the API to appear in the gallery.
 
-## React Compiler
+## Artwork
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+The Atlas logos, Atlas character artwork, map pins, and cloud illustrations shown below were drawn by the project author.
 
-Note: This will impact Vite dev & build performances.
-You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
+<p align="center">
+  <img src="./src/images/atla-head.svg" alt="Atlas character artwork" height="100" />
+  &nbsp;&nbsp;&nbsp;
+  <img src="./src/images/pin.svg" alt="Hand-drawn map pin" height="72" />
+  &nbsp;&nbsp;&nbsp;
+  <img src="./src/images/clouds2.png" alt="Hand-drawn clouds" height="100" />
+</p>
 
-## Expanding the ESLint configuration
+The Westeros sample map uses an image hosted by [A Wiki of Ice and Fire](https://awoiaf.westeros.org/). It is loaded from its source URL and is not part of the original Atlas artwork.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Features
+
+- Create and edit fictional maps on a fixed-coordinate canvas that adapts to the viewport.
+- Draw with a configurable brush and erase strokes.
+- Add pins with location details, text labels, and images from URLs.
+- Organize map content into layers, toggle layer visibility, and undo recent edits.
+- Zoom and pan around the canvas.
+- Browse maps, like them, and delete maps you own.
+- Save new maps and update existing maps using the configured API. A preview is generated automatically from the map canvas.
+
+### Keyboard shortcuts
+
+| Key | Action |
+| --- | --- |
+| `P` | Select the pin tool |
+| `B` | Select the brush tool |
+| `E` | Select the eraser |
+| `T` | Select the text tool |
+| `I` | Select the image tool |
+| `L` | Toggle the layers panel |
+| `Ctrl+Z` / `Cmd+Z` | Undo the last change |
+
+## Tech stack
+
+- React
+- Vite
+- React Router
+- React Konva / Konva
+
+## Getting started
+
+### Requirements
+
+- Node.js and npm
+- A maps API compatible with the endpoints below
+
+### Install and run
+
+```bash
+npm install
+```
+
+Set the API base URL in a local environment file such as `.env.local`:
+
+```env
+VITE_API_URL=http://localhost:3000
+```
+
+Then start the development server:
+
+```bash
+npm run dev
+```
+
+Vite prints the local URL in the terminal when the server is ready.
+
+## API configuration
+
+The frontend reads `VITE_API_URL` and expects the API to provide:
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `GET` | `/maps` | List maps |
+| `GET` | `/maps/:mapId` | Load a map |
+| `POST` | `/maps` | Save a map |
+| `PATCH` | `/maps/:mapId` | Update a map |
+| `DELETE` | `/maps/:mapId` | Delete a map |
+| `PUT` / `DELETE` | `/maps/:mapId/likes` | Like or unlike a map |
+
+The API is configured to exchange JSON. Saved maps include their title, an automatically generated JPEG canvas preview, and canvas layers. The sample Westeros map is bundled into the frontend and remains available if the API is empty or unreachable.
+
+## Available scripts
+
+```bash
+npm run dev      # Start the development server
+npm run build    # Create a production build
+npm run preview  # Preview the production build locally
+npm run lint     # Run ESLint
+```
+
+```
+Project_Atlas_Frontend
+├─ eslint.config.js
+├─ index.html
+├─ package-lock.json
+├─ package.json
+├─ public
+│  ├─ favicon.svg
+│  └─ icons.svg
+├─ README.md
+├─ src
+│  ├─ components
+│  │  ├─ About
+│  │  │  ├─ about.css
+│  │  │  └─ About.jsx
+│  │  ├─ App.css
+│  │  ├─ App.jsx
+│  │  ├─ arrow.css
+│  │  ├─ Footer
+│  │  │  ├─ footer.css
+│  │  │  └─ Footer.jsx
+│  │  ├─ Header
+│  │  │  ├─ header.css
+│  │  │  └─ Header.jsx
+│  │  ├─ Main
+│  │  │  ├─ Components
+│  │  │  │  └─ MapCanvas
+│  │  │  │     ├─ components
+│  │  │  │     │  └─ mapcanvas
+│  │  │  │     │     ├─ CanvasControls.jsx
+│  │  │  │     │     ├─ LayerPanel.jsx
+│  │  │  │     │     ├─ MapStage.jsx
+│  │  │  │     │     ├─ PinPreview.jsx
+│  │  │  │     │     └─ TextEditor.jsx
+│  │  │  │     ├─ hooks
+│  │  │  │     │  ├─ useMapCanvas.js
+│  │  │  │     │  ├─ useMapLayers.js
+│  │  │  │     │  ├─ useMapTools.jsx
+│  │  │  │     │  └─ useMapViewport.js
+│  │  │  │     ├─ mapcanvas.css
+│  │  │  │     └─ mapcanvas.jsx
+│  │  │  ├─ main.css
+│  │  │  └─ Main.jsx
+│  │  ├─ Maps
+│  │  │  ├─ Map
+│  │  │  │  ├─ map.css
+│  │  │  │  └─ Map.jsx
+│  │  │  ├─ maps.css
+│  │  │  └─ Maps.jsx
+│  │  ├─ Navigation
+│  │  │  ├─ navigation.css
+│  │  │  └─ Navigation.jsx
+│  │  ├─ Popup
+│  │  │  ├─ components
+│  │  │  │  ├─ AddImage
+│  │  │  │  │  └─ AddImage.jsx
+│  │  │  │  ├─ NewMap
+│  │  │  │  │  └─ NewMap.jsx
+│  │  │  │  ├─ PinPopup
+│  │  │  │  │  └─ PinPopup.jsx
+│  │  │  │  ├─ PopupWithConfirmation
+│  │  │  │  │  └─ PopupWithConfirmation.jsx
+│  │  │  │  └─ SaveMap
+│  │  │  │     └─ SaveMap.jsx
+│  │  │  ├─ popup.css
+│  │  │  └─ Popup.jsx
+│  │  ├─ Preloader
+│  │  │  ├─ preloader.css
+│  │  │  └─ Preloader.jsx
+│  │  └─ Sidebar
+│  │     ├─ sidebar.css
+│  │     └─ Sidebar.jsx
+│  ├─ contexts
+│  │  └─ CurrentUserContext.js
+│  ├─ images
+│  │  ├─ arrow.svg
+│  │  ├─ atla-flying.png
+│  │  ├─ atla-head.svg
+│  │  ├─ atla-icon.svg
+│  │  ├─ atla-logo.png
+│  │  ├─ close.svg
+│  │  ├─ clouds.png
+│  │  ├─ clouds2.png
+│  │  ├─ clouds2.png~
+│  │  ├─ delete-icon.svg
+│  │  ├─ edit.svg
+│  │  ├─ eraser.svg
+│  │  ├─ github-icon.svg
+│  │  ├─ image.svg
+│  │  ├─ like-active.svg
+│  │  ├─ like-inactive.svg
+│  │  ├─ linkedin-icon.svg
+│  │  ├─ move.svg
+│  │  ├─ pencil.svg
+│  │  ├─ pin.svg
+│  │  ├─ quill.png
+│  │  ├─ zoom-less.svg
+│  │  └─ zoom-plus.svg
+│  ├─ index.css
+│  ├─ main.jsx
+│  ├─ utils
+│  │  ├─ api.js
+│  │  ├─ defaultMap.js
+│  │  ├─ imageUrl.js
+│  │  └─ mapCanvasConfig.js
+│  ├─ variable.css
+│  └─ vendor
+│     ├─ fonts
+│     │  ├─ Inter-Black.woff2
+│     │  ├─ Inter-Medium.woff2
+│     │  ├─ Inter-Regular.woff2
+│     │  └─ PermanentMarker-Regular.ttf
+│     ├─ fonts.css
+│     └─ normalize.css
+└─ vite.config.js
+
+```

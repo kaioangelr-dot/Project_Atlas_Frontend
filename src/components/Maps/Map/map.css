@@ -1,0 +1,101 @@
+.map {
+  font-family: "Inter", Arial, sans-serif;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 282px;
+  height: 250px;
+  background: #fff;
+  border: 1px solid var(--border);
+  transition: 0.2s ease;
+  z-index: 8;
+}
+
+.map:hover {
+  scale: 1.03;
+}
+
+.map__title {
+  max-width: 220px;
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 29px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  margin: 0;
+}
+
+.map__description {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 3px 15px;
+}
+
+.map__image {
+  width: 282px;
+  height: 192px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: 0.4s ease;
+}
+
+.map__image:hover {
+  height: 210px;
+}
+
+.map__like-button {
+  width: 21px;
+  height: 19px;
+  background: transparent url("../../../images/like-inactive.svg") center no-repeat;
+  background-size: 21px 18px;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.map__like-button:hover {
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.map__delete-button {
+  width: 18px;
+  height: 18px;
+  background: transparent url("../../../images/delete-icon.svg") center no-repeat;
+  background-size: 18px 18px;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 18px;
+  right: 15px;
+  padding: 0;
+  margin: 0;
+}
+
+.map__delete-button:hover {
+  opacity: 0.6;
+}
+
+.map__like-button_is-active {
+  background: transparent url("../../../images/like-active.svg") no-repeat;
+}
+
+@media screen and (max-width: 544px) {
+  .map {
+    width: 265px;
+    height: 245px;
+  }
+
+  .map__description {
+    padding: 3px 10px;
+  }
+
+  .map__title {
+    font-size: 20px;
+  }
+}

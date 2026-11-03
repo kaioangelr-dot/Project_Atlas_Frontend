@@ -5,13 +5,27 @@
 }
 
 .app {
-  background-color: var(--bg-main);
-  height: 100%;
+  background-color: var(--main-bg);
+  height: 100vh;
   max-width: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   display: flex;
   flex-direction: column;
-  display: flex;
   align-items: center;
+}
+
+.app__error {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 2001;
+  max-width: min(90vw, 600px);
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--sec-bg);
+  color: #b81426;
+  box-shadow: 0 3px 8px var(--border);
+  text-align: center;
 }

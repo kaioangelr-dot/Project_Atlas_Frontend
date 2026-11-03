@@ -9,6 +9,7 @@ export default function useMapTools({
   activeLayerId,
   layers,
   allocateId,
+  recordUndo,
   updateLayer,
   getMapPosition,
   startPanning,
@@ -139,12 +140,44 @@ export default function useMapTools({
     cancelDrawing();
   };
 
+  const handleLabelClick = (label, layerId) => {
+    setSelectedImage(null);
+    setSelectedLabel({ id: label.id, layerId });
+
+    if (selectTool !== "quill") return;
+
+    textEditorActiveRef.current = true;
+    setTextDraft(label.text);
+    setTextEditor({
+      id: label.id,
+      layerId,
+      x: label.x,
+      y: label.y,
+      fontSize: label.fontSize || 20,
+      originalText: label.text,
+    });
+  };
+
   const finishTextEditing = () => {
     if (!textEditorActiveRef.current) return;
     textEditorActiveRef.current = false;
 
     const text = textDraft.trim();
-    if (text && textEditor) {
+    if (textEditor?.id) {
+      if (text !== textEditor.originalText) {
+        recordUndo();
+        updateLayer(
+          textEditor.layerId,
+          (layer) => ({
+            ...layer,
+            labels: layer.labels.map((label) =>
+              label.id === textEditor.id ? { ...label, text } : label,
+            ),
+          }),
+          false,
+        );
+      }
+    } else if (text && textEditor) {
       const id = allocateId();
       updateLayer(textEditor.layerId, (layer) => ({
         ...layer,
@@ -177,7 +210,7 @@ export default function useMapTools({
       setSelectedImage(null);
       textEditorActiveRef.current = true;
       setTextDraft("");
-      setTextEditor({ layerId: activeLayerId, x: position.x, y: position.y });
+      setTextEditor({ layerId: activeLayerId, x: position.x, y: position.y, originalText: "" });
       return;
     }
 
@@ -279,6 +312,7 @@ export default function useMapTools({
     handleStageMouseMove,
     handleStageMouseUp,
     handleStageClick,
+    handleLabelClick,
     finishTextEditing,
     cancelTextEditing,
     handlePinClick,

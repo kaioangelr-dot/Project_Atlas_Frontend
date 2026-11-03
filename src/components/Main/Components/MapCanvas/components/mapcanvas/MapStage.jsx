@@ -89,6 +89,7 @@ export default function MapStage({
   setHoveredPinId,
   selectedLabel,
   selectedImage,
+  onLabelClick,
   setSelectedLabel,
   setSelectedImage,
   updateLayer,
@@ -192,14 +193,37 @@ export default function MapStage({
               scaleX={label.scaleX || 1}
               scaleY={label.scaleY || 1}
               fill="#222"
-              stroke="#000"
-              strokeWidth={3}
-              lineJoin="round"
+              fontFamily="Inter"
+              fontStyle="normal"
+              letterSpacing={1}
+              draggable={selectTool === "quill"}
+              onDragStart={(event) => {
+                if (selectTool !== "quill" || event.evt.button !== 0) {
+                  event.target.stopDrag();
+                  return;
+                }
+                setSelectedImage(null);
+                setSelectedLabel({ id: label.id, layerId: layer.id });
+                recordUndo();
+              }}
+              onDragEnd={(event) => {
+                updateLayer(
+                  layer.id,
+                  (currentLayer) => ({
+                    ...currentLayer,
+                    labels: currentLayer.labels.map((currentLabel) =>
+                      currentLabel.id === label.id
+                        ? { ...currentLabel, x: event.target.x(), y: event.target.y() }
+                        : currentLabel,
+                    ),
+                  }),
+                  false,
+                );
+              }}
               onClick={(event) => {
                 if (event.evt.button !== 0) return;
                 event.cancelBubble = true;
-                setSelectedImage(null);
-                setSelectedLabel({ id: label.id, layerId: layer.id });
+                onLabelClick(label, layer.id);
               }}
             />
           ))}

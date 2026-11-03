@@ -74,6 +74,7 @@ export default function MapCanvas(props) {
     handleStageMouseUp,
     handleWheel,
     handleStageClick,
+    handleLabelClick,
     registerImageNode,
     notifyImageNodeReady,
     labelRefs,
@@ -161,6 +162,7 @@ export default function MapCanvas(props) {
           setHoveredPinId={setHoveredPinId}
           selectedLabel={selectedLabel}
           selectedImage={selectedImage}
+          onLabelClick={handleLabelClick}
           setSelectedLabel={setSelectedLabel}
           setSelectedImage={setSelectedImage}
           updateLayer={updateLayer}

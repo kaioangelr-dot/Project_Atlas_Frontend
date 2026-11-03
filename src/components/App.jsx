@@ -112,7 +112,6 @@ function App() {
   const [currentMap, setCurrentMap] = useState({ title: "New map", layers: [], likes: [], isSaved: false });
   const [mapLoadVersion, setMapLoadVersion] = useState(0);
   const [loadedMapId, setLoadedMapId] = useState(null);
-  const [apiError, setApiError] = useState("");
   const [popup, setPopup] = useState(null);
   const [isOpen, setIsOpen] = useState({ navigation: true, sidebar: true });
   const [isLayerPanelOpen, setIsLayerPanelOpen] = useState(false);
@@ -137,7 +136,7 @@ function App() {
         }
       })
       .catch((error) => {
-        if (isMounted) setApiError(error instanceof Error ? error.message : String(error));
+        if (isMounted) console.error("Could not load maps.", error);
       })
       .finally(() => {
         if (isMounted) setIsLoading(false);
@@ -150,7 +149,6 @@ function App() {
 
   function handleSaveMap(mapData) {
     setIsLoading(true);
-    setApiError("");
     const saveRequest = currentMap.isSaved
       ? api.updateMap(currentMap._id, mapData)
       : api.saveMap(mapData);
@@ -177,10 +175,6 @@ function App() {
         setMaps((currentMaps) => [map, ...currentMaps.filter((item) => item._id !== map._id)]);
         setPopup(null);
       })
-      .catch((error) => {
-        setApiError(error instanceof Error ? error.message : String(error));
-        throw error;
-      })
       .finally(() => {
         setIsLoading(false);
       });
@@ -191,7 +185,6 @@ function App() {
       const requestId = mapLoadRequest.current + 1;
       mapLoadRequest.current = requestId;
       setIsLoading(true);
-      setApiError("");
       setLoadedMapId(null);
       const mapRequest = mapId === DEFAULT_MAP_ID ? Promise.resolve(DEFAULT_MAP) : api.getMapById(mapId);
       return mapRequest
@@ -207,7 +200,7 @@ function App() {
         })
         .catch((error) => {
           if (requestId !== mapLoadRequest.current) return;
-          setApiError(error instanceof Error ? error.message : String(error));
+          console.error("Could not load map.", error);
         })
         .finally(() => {
           if (requestId === mapLoadRequest.current) setIsLoading(false);
@@ -217,7 +210,6 @@ function App() {
   );
 
   function handleMapLike(isLiked, mapId) {
-    setApiError("");
     return api.changeMapLike(mapId, isLiked)
       .then(() => {
         setMaps((currentMaps) =>
@@ -229,13 +221,12 @@ function App() {
         );
       })
       .catch((error) => {
-        setApiError(error instanceof Error ? error.message : String(error));
+        console.error("Could not update map like.", error);
       });
   }
 
   function handleMapDelete(map) {
     setIsLoading(true);
-    setApiError("");
     return api.deleteMap(map._id)
       .then(() => {
         setMaps((currentMaps) => currentMaps.filter((item) => item._id !== map._id));
@@ -244,7 +235,7 @@ function App() {
         }
       })
       .catch((error) => {
-        setApiError(error instanceof Error ? error.message : String(error));
+        console.error("Could not delete map.", error);
       })
       .finally(() => {
         setIsLoading(false);
@@ -355,11 +346,6 @@ function App() {
         }}
       >
         <Header />
-        {apiError && (
-          <p className="app__error" role="alert">
-            {apiError}
-          </p>
-        )}
         <Navigation handleArrowClick={handleArrowClick} isOpen={isOpen.navigation} />
         <Routes>
           <Route path="/" element={mapEditor} />

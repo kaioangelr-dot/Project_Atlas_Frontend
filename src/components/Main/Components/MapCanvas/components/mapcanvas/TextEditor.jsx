@@ -33,7 +33,10 @@ export default function TextEditor({
       style={{
         left: `${displayOffsetX + (editor.x * stageScale + stagePos.x) * displayScale}px`,
         top: `${displayOffsetY + (editor.y * stageScale + stagePos.y) * displayScale}px`,
-        fontSize: `${20 * stageScale * displayScale}px`,
+        fontFamily: "Inter, sans-serif",
+        fontSize: `${(editor.fontSize || 15) * stageScale * displayScale}px`,
+        fontWeight: 400,
+        letterSpacing: `${stageScale * displayScale}px`,
       }}
     />
   );

@@ -22,6 +22,7 @@ export default function useMapCanvas({
     activeLayerId: mapLayers.activeLayerId,
     layers: mapLayers.layers,
     allocateId: mapLayers.allocateId,
+    recordUndo: mapLayers.recordUndo,
     updateLayer: mapLayers.updateLayer,
     getMapPosition: viewport.getMapPosition,
     startPanning: viewport.startPanning,

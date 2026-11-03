@@ -10,12 +10,12 @@ The Maps page includes a sample map named **Westeros**. It is a local example an
 
 ## Artwork
 
-The Atlas logos, Atlas character artwork, map pins, and cloud illustrations shown below were drawn by the project author.
+The Atlas logos, Atlas character artwork, tools, cloud illustrations, etc... were drawn by the project author.
 
 <p align="center">
   <img src="./src/images/atla-head.svg" alt="Atlas character artwork" height="100" />
   &nbsp;&nbsp;&nbsp;
-  <img src="./src/images/pin.svg" alt="Hand-drawn map pin" height="72" />
+  <img src="./src/images/atla-flying.png" alt="Hand-drawn map pin" height="72" />
   &nbsp;&nbsp;&nbsp;
   <img src="./src/images/clouds2.png" alt="Hand-drawn clouds" height="100" />
 </p>
@@ -34,15 +34,15 @@ The Westeros sample map uses an image hosted by [A Wiki of Ice and Fire](https:/
 
 ### Keyboard shortcuts
 
-| Key | Action |
-| --- | --- |
-| `P` | Select the pin tool |
-| `B` | Select the brush tool |
-| `E` | Select the eraser |
-| `T` | Select the text tool |
-| `I` | Select the image tool |
-| `L` | Toggle the layers panel |
-| `Ctrl+Z` / `Cmd+Z` | Undo the last change |
+| Key                | Action                  |
+| ------------------ | ----------------------- |
+| `P`                | Select the pin tool     |
+| `B`                | Select the brush tool   |
+| `E`                | Select the eraser       |
+| `T`                | Select the text tool    |
+| `I`                | Select the image tool   |
+| `L`                | Toggle the layers panel |
+| `Ctrl+Z` / `Cmd+Z` | Undo the last change    |
 
 ## Tech stack
 
@@ -82,13 +82,13 @@ Vite prints the local URL in the terminal when the server is ready.
 
 The frontend reads `VITE_API_URL` and expects the API to provide:
 
-| Method | Endpoint | Purpose |
-| --- | --- | --- |
-| `GET` | `/maps` | List maps |
-| `GET` | `/maps/:mapId` | Load a map |
-| `POST` | `/maps` | Save a map |
-| `PATCH` | `/maps/:mapId` | Update a map |
-| `DELETE` | `/maps/:mapId` | Delete a map |
+| Method           | Endpoint             | Purpose              |
+| ---------------- | -------------------- | -------------------- |
+| `GET`            | `/maps`              | List maps            |
+| `GET`            | `/maps/:mapId`       | Load a map           |
+| `POST`           | `/maps`              | Save a map           |
+| `PATCH`          | `/maps/:mapId`       | Update a map         |
+| `DELETE`         | `/maps/:mapId`       | Delete a map         |
 | `PUT` / `DELETE` | `/maps/:mapId/likes` | Like or unlike a map |
 
 The API is configured to exchange JSON. Saved maps include their title, an automatically generated JPEG canvas preview, and canvas layers. The sample Westeros map is bundled into the frontend and remains available if the API is empty or unreachable.

@@ -182,12 +182,10 @@
 
 @media screen and (max-width: 544px) {
   .map-canvas__controls {
-    max-height: 20px;
-    max-width: 60px;
-    gap: 6px 0;
+    max-height: 60px;
+    max-width: 125px;
     display: flex;
-    flex-direction: column;
     left: 12px;
-    top: 450px;
+    top: 545px;
   }
 }

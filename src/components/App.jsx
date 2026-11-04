@@ -14,7 +14,7 @@ import Footer from "./Footer/Footer";
 import Api from "../utils/api";
 import { DEFAULT_MAP, DEFAULT_MAP_ID } from "../utils/defaultMap";
 
-function unwrapResponse(response) {
+/* function unwrapResponse(response) {
   return response?.data ?? response;
 }
 
@@ -93,7 +93,7 @@ function MapDetailRoute({ loadMap, loadedMapId, children }) {
   }, [loadMap, mapId]);
 
   return loadedMapId === mapId ? children : null;
-}
+} */
 
 function App() {
   const { pathname } = useLocation();
@@ -122,7 +122,8 @@ function App() {
   useEffect(() => {
     let isMounted = true;
 
-    api.getMaps()
+    api
+      .getMaps()
       .then((response) => {
         const records = unwrapResponse(response);
         const mapRecords = Array.isArray(records) ? records : records?.maps;
@@ -149,9 +150,7 @@ function App() {
 
   function handleSaveMap(mapData) {
     setIsLoading(true);
-    const saveRequest = currentMap.isSaved
-      ? api.updateMap(currentMap._id, mapData)
-      : api.saveMap(mapData);
+    const saveRequest = currentMap.isSaved ? api.updateMap(currentMap._id, mapData) : api.saveMap(mapData);
 
     return saveRequest
       .then((savedRecord) => {
@@ -210,7 +209,8 @@ function App() {
   );
 
   function handleMapLike(isLiked, mapId) {
-    return api.changeMapLike(mapId, isLiked)
+    return api
+      .changeMapLike(mapId, isLiked)
       .then(() => {
         setMaps((currentMaps) =>
           currentMaps.map((map) => {
@@ -227,7 +227,8 @@ function App() {
 
   function handleMapDelete(map) {
     setIsLoading(true);
-    return api.deleteMap(map._id)
+    return api
+      .deleteMap(map._id)
       .then(() => {
         setMaps((currentMaps) => currentMaps.filter((item) => item._id !== map._id));
         if (currentMap._id === map._id) {

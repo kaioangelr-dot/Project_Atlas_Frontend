@@ -5,7 +5,7 @@ import ConfirmationPopup from "../../Popup/components/PopupWithConfirmation/Popu
 import { Link } from "react-router-dom";
 
 export default function Map(props) {
-  const { title, link, likes, owner, isDefault, _id: mapId } = props.map;
+  const { title, link, likes, /* owner, isDefault, */ _id: mapId } = props.map;
   const { onOpenPopup, onClosePopup, onmapLike, onmapDelete } = props;
 
   const { currentUser } = useContext(CurrentUserContext);

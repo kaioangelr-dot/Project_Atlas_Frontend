@@ -1,6 +1,6 @@
 import atla from "../../images/atla-flying.png";
 
-const Preloader = ({ isLoading }) => {
+const Preloader = () => {
   return (
     <div className="preloader-container">
       <img className="preloader-image" src={atla} alt="dragon flying"></img>

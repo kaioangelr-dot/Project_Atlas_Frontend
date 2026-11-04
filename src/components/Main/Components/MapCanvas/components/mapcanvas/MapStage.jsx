@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Group, Image as CanvasImage, Layer, Line, Path, Stage, Text, Transformer } from "react-konva";
 import { MAP_CANVAS_HEIGHT, MAP_CANVAS_WIDTH } from "../../../../../../utils/mapCanvasConfig";
+import { getMapLabelStyle, getPinToolStyle, getSoftStrokeStyle } from "./mapCanvasToolStyles";
 
 function MapImage({ image, nodeRef, onNodeReady, onSelect, onDragStart, onDragEnd, draggable, listening }) {
   const [loadedImage, setLoadedImage] = useState(null);
@@ -40,32 +41,6 @@ function MapImage({ image, nodeRef, onNodeReady, onSelect, onDragStart, onDragEn
     />
   );
 }
-
-function SoftStroke({ drawing, erasing, color }) {
-  const softness = Math.min(100, Math.max(0, drawing.softness ?? 0)) / 100;
-  const edgeBlur = softness * drawing.size * 0.3;
-
-  return (
-    <Line
-      points={drawing.points}
-      stroke={color}
-      strokeWidth={drawing.size}
-      shadowColor={color}
-      shadowBlur={edgeBlur}
-      shadowOpacity={softness}
-      lineCap="round"
-      lineJoin="round"
-      tension={0.35}
-      globalCompositeOperation={erasing ? "destination-out" : "source-over"}
-      listening={false}
-    />
-  );
-}
-
-const PIN_WIDTH = 38;
-const PIN_MAX_WIDTH = 48;
-const PIN_HOVER_SCALE = 1.12;
-const BRUSH_COLOR = "#00674F";
 
 export default function MapStage({
   layers,
@@ -130,12 +105,7 @@ export default function MapStage({
       {layers.map((layer) => (
         <Layer key={layer.id} visible={layer.visible}>
           {layer.drawings.map((drawing) => (
-            <SoftStroke
-              key={drawing.id}
-              drawing={drawing}
-              erasing={drawing.kind === "eraser"}
-              color={drawing.kind === "eraser" ? "#000" : BRUSH_COLOR}
-            />
+            <Line key={drawing.id} points={drawing.points} {...getSoftStrokeStyle(drawing)} />
           ))}
 
           {layer.images.map((image) => (
@@ -189,13 +159,9 @@ export default function MapStage({
               x={label.x}
               y={label.y}
               text={label.text}
-              fontSize={label.fontSize || 20}
+              {...getMapLabelStyle(label)}
               scaleX={label.scaleX || 1}
               scaleY={label.scaleY || 1}
-              fill="#222"
-              fontFamily="Inter"
-              fontStyle="normal"
-              letterSpacing={1}
               draggable={selectTool === "quill"}
               onDragStart={(event) => {
                 if (selectTool !== "quill" || event.evt.button !== 0) {
@@ -230,15 +196,15 @@ export default function MapStage({
 
           {layer.pins.map((pin) => {
             const isHovered = hoveredPinId === pin.id;
-            const pinScale = Math.min(isHovered ? PIN_HOVER_SCALE : 1, PIN_MAX_WIDTH / PIN_WIDTH) / stageScale;
+            const pinStyle = getPinToolStyle({ isHovered, stageScale });
 
             return (
               <Group
                 key={pin.id}
                 x={pin.x}
                 y={pin.y}
-                scaleX={pinScale}
-                scaleY={pinScale}
+                scaleX={pinStyle.scale}
+                scaleY={pinStyle.scale}
                 draggable
                 onMouseDown={() => {
                   wasDraggedRef.current = false;
@@ -280,15 +246,14 @@ export default function MapStage({
                   y={-48}
                   data="M6 20 A18 18 0 1 1 42 20 C42 30 29 43 24 49 C19 43 6 30 6 20 Z M24 27 C27.866 27 31 23.866 31 20 C31 16.134 27.866 13 24 13 C20.134 13 17 16.134 17 20 C17 23.866 20.134 27 24 27 Z"
                   fillRule="evenodd"
-                  fill={isHovered ? "#b81426" : "#e61f35"}
-                  strokeWidth={2}
+                  fill={pinStyle.fill}
+                  strokeWidth={pinStyle.strokeWidth}
                 />
               </Group>
             );
           })}
 
-          {(selectedLabel?.layerId === layer.id ||
-            (selectedImage?.layerId === layer.id && selectTool === "image")) && (
+          {(selectedLabel?.layerId === layer.id || (selectedImage?.layerId === layer.id && selectTool === "image")) && (
             <Transformer
               ref={transformerRef}
               keepRatio

@@ -31,6 +31,7 @@
   border: 2px solid var(--border);
   margin-bottom: 50px;
   background-color: var(--bg-main);
+  z-index: 10000;
 }
 
 .about__title {

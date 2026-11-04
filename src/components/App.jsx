@@ -1,7 +1,7 @@
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Routes, Route, useLocation, useParams } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import Preloader from "./Preloader/Preloader";
 import Header from "./Header/Header";
@@ -11,86 +11,9 @@ import Sidebar from "./Sidebar/Sidebar";
 import About from "./About/About";
 import Maps from "./Maps/Maps";
 import Footer from "./Footer/Footer";
+import MapDetailRoute from "./MapDetailRoute/MapDetailRoute";
 import Api from "../utils/api";
 import { DEFAULT_MAP, DEFAULT_MAP_ID } from "../utils/defaultMap";
-
-function unwrapResponse(response) {
-  return response?.data ?? response;
-}
-
-function normalizeLikes(likes, fallback = []) {
-  if (!Array.isArray(likes)) return fallback;
-  return likes.filter(Boolean).map((user) => (typeof user === "object" ? String(user._id ?? user.id) : String(user)));
-}
-
-function normalizeMap(record, fallback = {}) {
-  const data = unwrapResponse(record);
-  const mapData = data?.map && typeof data.map === "object" ? data.map : {};
-  const id = data?._id ?? data?.id ?? mapData._id ?? fallback._id;
-  const title = data?.name ?? data?.title ?? fallback.title;
-  const link = data?.image ?? data?.link ?? fallback.previewImage ?? fallback.link;
-  const rawLayers = mapData.layers ?? data?.layers ?? fallback.layers;
-
-  if (!id || !title || typeof link !== "string") {
-    throw new Error("The server returned a map with an invalid format.");
-  }
-  if (!Array.isArray(rawLayers)) {
-    throw new Error("This map does not contain saved canvas layers.");
-  }
-  const layers = rawLayers.map((layer) => ({
-    ...layer,
-    pins: Array.isArray(layer.pins) ? layer.pins : [],
-    drawings: Array.isArray(layer.drawings) ? layer.drawings : [],
-    labels: Array.isArray(layer.labels) ? layer.labels : [],
-    images: Array.isArray(layer.images) ? layer.images : [],
-  }));
-
-  return {
-    _id: String(id),
-    title,
-    link,
-    previewImage: link,
-    layers,
-    likes: normalizeLikes(data.likes, fallback.likes ?? []),
-    owner: data.owner
-      ? typeof data.owner === "object"
-        ? String(data.owner._id ?? data.owner.id)
-        : String(data.owner)
-      : (fallback.owner ?? ""),
-    isSaved: true,
-  };
-}
-
-function normalizeMapSummary(record) {
-  const data = unwrapResponse(record);
-  const mapData = data?.map && typeof data.map === "object" ? data.map : {};
-  const id = data?._id ?? data?.id ?? mapData._id;
-  const title = data?.name ?? data?.title;
-  const link = data?.image ?? data?.link;
-
-  if (!id || !title || typeof link !== "string") {
-    throw new Error("The server returned a map with an invalid format.");
-  }
-
-  return {
-    _id: String(id),
-    title,
-    link,
-    likes: normalizeLikes(data.likes),
-    owner:
-      data.owner && typeof data.owner === "object" ? String(data.owner._id ?? data.owner.id) : String(data.owner ?? ""),
-  };
-}
-
-function MapDetailRoute({ loadMap, loadedMapId, children }) {
-  const { mapId } = useParams();
-
-  useEffect(() => {
-    loadMap(mapId);
-  }, [loadMap, mapId]);
-
-  return loadedMapId === mapId ? children : null;
-}
 
 function App() {
   const { pathname } = useLocation();
@@ -116,19 +39,36 @@ function App() {
   const [brushSize, setBrushSize] = useState(16);
   const [brushSoftness, setBrushSoftness] = useState(35);
 
+  function normalizeMap(record) {
+    return {
+      _id: record._id,
+      title: record.name,
+      link: record.image,
+      previewImage: record.image,
+      layers: record.map.layers,
+      likes: record.likes,
+      owner: record.owner,
+      isSaved: true,
+    };
+  }
+
+  function normalizeMapSummary(record) {
+    return {
+      _id: record._id,
+      title: record.name,
+      link: record.image,
+      likes: record.likes,
+      owner: record.owner,
+    };
+  }
+
   useEffect(() => {
     let isMounted = true;
 
     api
       .getMaps()
-      .then((response) => {
-        const records = unwrapResponse(response);
-        const mapRecords = Array.isArray(records) ? records : records?.maps;
-        if (!Array.isArray(mapRecords)) {
-          throw new Error("The server returned an invalid maps list.");
-        }
-
-        const loadedMaps = mapRecords.map(normalizeMapSummary);
+      .then((records) => {
+        const loadedMaps = records.map(normalizeMapSummary);
         if (isMounted) {
           setMaps([DEFAULT_MAP, ...loadedMaps.filter((map) => map._id !== DEFAULT_MAP_ID)]);
         }
@@ -151,7 +91,7 @@ function App() {
 
     return saveRequest
       .then((savedRecord) => {
-        const responseMap = savedRecord ? normalizeMap(savedRecord, { ...currentMap, ...mapData }) : null;
+        const responseMap = savedRecord ? normalizeMap(savedRecord) : null;
         const map = {
           ...currentMap,
           ...responseMap,

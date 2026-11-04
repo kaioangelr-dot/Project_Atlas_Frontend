@@ -14,15 +14,13 @@ import Footer from "./Footer/Footer";
 import Api from "../utils/api";
 import { DEFAULT_MAP, DEFAULT_MAP_ID } from "../utils/defaultMap";
 
-/* function unwrapResponse(response) {
+function unwrapResponse(response) {
   return response?.data ?? response;
 }
 
 function normalizeLikes(likes, fallback = []) {
   if (!Array.isArray(likes)) return fallback;
-  return likes.filter(Boolean).map((user) =>
-    typeof user === "object" ? String(user._id ?? user.id) : String(user),
-  );
+  return likes.filter(Boolean).map((user) => (typeof user === "object" ? String(user._id ?? user.id) : String(user)));
 }
 
 function normalizeMap(record, fallback = {}) {
@@ -58,7 +56,7 @@ function normalizeMap(record, fallback = {}) {
       ? typeof data.owner === "object"
         ? String(data.owner._id ?? data.owner.id)
         : String(data.owner)
-      : fallback.owner ?? "",
+      : (fallback.owner ?? ""),
     isSaved: true,
   };
 }
@@ -79,9 +77,8 @@ function normalizeMapSummary(record) {
     title,
     link,
     likes: normalizeLikes(data.likes),
-    owner: data.owner && typeof data.owner === "object"
-      ? String(data.owner._id ?? data.owner.id)
-      : String(data.owner ?? ""),
+    owner:
+      data.owner && typeof data.owner === "object" ? String(data.owner._id ?? data.owner.id) : String(data.owner ?? ""),
   };
 }
 
@@ -93,7 +90,7 @@ function MapDetailRoute({ loadMap, loadedMapId, children }) {
   }, [loadMap, mapId]);
 
   return loadedMapId === mapId ? children : null;
-} */
+}
 
 function App() {
   const { pathname } = useLocation();

@@ -12,9 +12,7 @@ export function getSoftStrokeStyle(drawing) {
   return {
     stroke: color,
     strokeWidth: drawing.size,
-    shadowColor: color,
-    shadowBlur: softness * drawing.size * 0.3,
-    shadowOpacity: softness,
+    opacity: 1 - softness,
     lineCap: "round",
     lineJoin: "round",
     tension: 0.35,

@@ -36,8 +36,8 @@ function App() {
   const [isOpen, setIsOpen] = useState({ navigation: true, sidebar: true });
   const [isLayerPanelOpen, setIsLayerPanelOpen] = useState(false);
   const [selectTool, setSelectTool] = useState(null);
-  const [brushSize, setBrushSize] = useState(16);
-  const [brushSoftness, setBrushSoftness] = useState(35);
+  const [brushSize, setBrushSize] = useState(5);
+  const [brushSoftness, setBrushSoftness] = useState(0);
 
   function normalizeMap(record) {
     return {

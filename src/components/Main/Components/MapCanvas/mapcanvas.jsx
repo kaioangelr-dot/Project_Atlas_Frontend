@@ -1,12 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import SaveMap from "../../../Popup/components/SaveMap/SaveMap";
 import CanvasControls from "./components/mapcanvas/CanvasControls";
+import createSaveMapHandler from "./components/mapcanvas/createSaveMapHandler";
 import LayerPanel from "./components/mapcanvas/LayerPanel";
 import MapStage from "./components/mapcanvas/MapStage";
 import PinPreview from "./components/mapcanvas/PinPreview";
 import TextEditor from "./components/mapcanvas/TextEditor";
 import useMapCanvas from "./hooks/useMapCanvas";
-import { MAP_CANVAS_HEIGHT, MAP_CANVAS_WIDTH } from "../../../../utils/mapCanvasConfig";
+import useStageDisplay from "./hooks/useStageDisplay";
 
 export default function MapCanvas(props) {
   const {
@@ -19,35 +18,7 @@ export default function MapCanvas(props) {
     layers: initialLayers,
   } = props;
 
-  const stageViewportRef = useRef(null);
-  const [stageDisplay, setStageDisplay] = useState({ scale: 1, offsetX: 0, offsetY: 0 });
-
-  useEffect(() => {
-    const viewport = stageViewportRef.current;
-    if (!viewport) return undefined;
-
-    const updateDisplay = () => {
-      const scale = Math.max(
-        viewport.clientWidth / MAP_CANVAS_WIDTH,
-        viewport.clientHeight / MAP_CANVAS_HEIGHT,
-      );
-      const displayScale = Number.isFinite(scale) && scale > 0 ? scale : 1;
-      setStageDisplay({
-        scale: displayScale,
-        offsetX: (viewport.clientWidth - MAP_CANVAS_WIDTH * displayScale) / 2,
-        offsetY: (viewport.clientHeight - MAP_CANVAS_HEIGHT * displayScale) / 2,
-      });
-    };
-
-    updateDisplay();
-    const observer = new ResizeObserver(updateDisplay);
-    observer.observe(viewport);
-    window.addEventListener("resize", updateDisplay);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", updateDisplay);
-    };
-  }, []);
+  const { viewportRef: stageViewportRef, stageDisplay } = useStageDisplay();
 
   const {
     layers,
@@ -92,24 +63,19 @@ export default function MapCanvas(props) {
     handlePinClick,
     handleUndo,
   } = useMapCanvas({ ...props, initialLayers, displayScale: stageDisplay.scale });
+  const handleOpenSaveDialog = createSaveMapHandler({
+    onOpen,
+    mapTitle,
+    onSaveMap,
+    isSaving,
+    layersRef,
+    stageRef,
+  });
 
   return (
     <div className="map-canvas">
       <CanvasControls
-        onSave={() =>
-          onOpen({
-            title: "Save map",
-            children: (
-              <SaveMap
-                title={mapTitle}
-                layers={layersRef.current}
-                stageRef={stageRef}
-                onSave={onSaveMap}
-                isSaving={isSaving}
-              />
-            ),
-          })
-        }
+        onSave={handleOpenSaveDialog}
         onUndo={handleUndo}
         canUndo={canUndo}
         onZoom={zoom}

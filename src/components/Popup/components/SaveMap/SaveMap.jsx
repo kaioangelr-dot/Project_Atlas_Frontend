@@ -20,6 +20,7 @@ export default function SaveMap({ title, layers, stageRef, onSave, isSaving }) {
     const previousScale = { x: stage.scaleX(), y: stage.scaleY() };
     const previousPosition = stage.position();
     let previewImage;
+    let previewFallback = false;
 
     try {
       stage.scale({ x: 1, y: 1 });
@@ -30,9 +31,27 @@ export default function SaveMap({ title, layers, stageRef, onSave, isSaving }) {
         quality: 0.8,
         pixelRatio: 0.5,
       });
-    } catch {
-      setError("Could not generate the map preview. An external image may not allow canvas export.");
-      return;
+    } catch (previewError) {
+      if (previewError.name !== "SecurityError") {
+        setError("Could not generate the map preview.");
+        return;
+      }
+
+      const mapImages = layers.flatMap((layer) => layer.images);
+      const fallbackImage = mapImages.reduce(
+        (largest, image) => (
+          !largest || image.width * image.height > largest.width * largest.height ? image : largest
+        ),
+        null,
+      );
+
+      if (!fallbackImage) {
+        setError("Could not generate a preview for this map.");
+        return;
+      }
+
+      previewImage = fallbackImage.src;
+      previewFallback = true;
     } finally {
       stage.scale(previousScale);
       stage.position(previousPosition);
@@ -41,6 +60,9 @@ export default function SaveMap({ title, layers, stageRef, onSave, isSaving }) {
 
     try {
       await onSave({ title: title.trim(), previewImage, layers });
+      if (previewFallback) {
+        console.info("Map saved with its largest image as the preview because canvas export was blocked by CORS.");
+      }
     } catch (saveError) {
       setError(saveError instanceof Error ? saveError.message : String(saveError));
     }

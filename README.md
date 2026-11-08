@@ -78,6 +78,30 @@ npm run dev
 
 Vite prints the local URL in the terminal when the server is ready.
 
+### Run the backend
+
+The Express backend lives in `backend`. Configure `backend/.env` with a MongoDB
+connection string before starting it:
+
+```env
+MONGO_URI=mongodb://127.0.0.1:27017/project-atlas
+PORT=3000
+```
+
+Then install and start the backend from that directory:
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+Authentication middleware is intentionally disabled while the frontend has no
+login flow. To enable it later, connect the frontend login flow and uncomment
+the authentication setup in `backend/app.js`. Maps created without a signed-in
+user have no owner; temporary anonymous likes use the frontend's placeholder
+user ID.
+
 ## API configuration
 
 The frontend reads `VITE_API_URL` and expects the API to provide:
@@ -91,7 +115,13 @@ The frontend reads `VITE_API_URL` and expects the API to provide:
 | `DELETE`         | `/maps/:mapId`       | Delete a map         |
 | `PUT` / `DELETE` | `/maps/:mapId/likes` | Like or unlike a map |
 
-The API is configured to exchange JSON. Saved maps include their title, an automatically generated JPEG canvas preview, and canvas layers. The sample Westeros map is bundled into the frontend and remains available if the API is empty or unreachable.
+The API exchanges JSON and returns map records directly (a JSON array for
+`GET /maps`, one object for map detail/create/update). A saved map is submitted
+as `{ "name": "...", "image": "...", "map": { "layers": [] } }`. `image` may
+be an HTTP(S) URL or the JPEG data URL generated from the canvas. Layers preserve
+their pins, drawings, labels, images, and visibility settings. The sample
+Westeros map is bundled into the frontend and remains available if the API is
+empty or unreachable.
 
 ## Available scripts
 

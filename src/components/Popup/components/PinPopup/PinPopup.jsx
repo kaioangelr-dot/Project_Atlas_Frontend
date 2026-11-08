@@ -18,7 +18,6 @@ export default function PinPopup({ pin, onSave }) {
         ? "Name must be 60 characters or fewer."
         : "";
   const showNameError = (nameTouched || submitAttempted) && Boolean(nameError);
-  const showPhotoRequiredError = submitAttempted && !photo && !photoError;
   const isSaveDisabled = Boolean(nameError) || isPhotoLoading || Boolean(photoError);
 
   const handlePhotoChange = (event) => {
@@ -30,24 +29,27 @@ export default function PinPopup({ pin, onSave }) {
     event.preventDefault();
     setSubmitAttempted(true);
 
-    if (isSaveDisabled || !photo.trim()) return;
+    if (isSaveDisabled) return;
 
-    setIsPhotoLoading(true);
-    try {
-      await loadImageFromUrl(photo);
-    } catch (error) {
-      if (!(error instanceof Error)) throw error;
-      setPhotoError(error.message);
+    const trimmedPhoto = photo.trim();
+    if (trimmedPhoto) {
+      setIsPhotoLoading(true);
+      try {
+        await loadImageFromUrl(trimmedPhoto);
+      } catch (error) {
+        if (!(error instanceof Error)) throw error;
+        setPhotoError(error.message);
+        setIsPhotoLoading(false);
+        return;
+      }
+
       setIsPhotoLoading(false);
-      return;
     }
-
-    setIsPhotoLoading(false);
 
     onSave({
       name: trimmedName,
       description: description.trim(),
-      photo: photo.trim(),
+      photo: trimmedPhoto,
     });
   };
 
@@ -90,9 +92,6 @@ export default function PinPopup({ pin, onSave }) {
             disabled={isPhotoLoading}
           />
           <span className={`popup__input-error ${photoError ? "popup__input-error_active" : ""}`}>{photoError}</span>
-          <span className={`popup__input-error ${showPhotoRequiredError ? "popup__input-error_active" : ""}`}>
-            {showPhotoRequiredError ? "A photo is required." : ""}
-          </span>
         </div>
         {photo && (
           <img

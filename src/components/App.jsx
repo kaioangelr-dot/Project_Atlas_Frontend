@@ -1,7 +1,7 @@
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 
 import Preloader from "./Preloader/Preloader";
 import Header from "./Header/Header";
@@ -12,22 +12,25 @@ import About from "./About/About";
 import Maps from "./Maps/Maps";
 import Footer from "./Footer/Footer";
 import MapDetailRoute from "./MapDetailRoute/MapDetailRoute";
+import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute";
+import { Login } from "./pages/Login";
+import { Register } from "./pages/Register";
+import IsAuthorized from "./Popup/components/InfoToolTip/components/IsAuthorized";
+import IsNotAuthorized from "./Popup/components/InfoToolTip/components/IsNotAuthorized";
 import Api from "../utils/api";
+import { getToken, removeToken, setToken } from "../utils/token";
 import { DEFAULT_MAP, DEFAULT_MAP_ID } from "../utils/defaultMap";
 
 function App() {
-  const { pathname } = useLocation();
+  const location = useLocation();
+  const { pathname } = location;
+  const navigate = useNavigate();
   const previousPathname = useRef(pathname);
   const mapLoadRequest = useRef(0);
-  const currentUser = { _id: "3", name: "John Doe", email: "john.doe@example.com" };
-  const api = useMemo(
-    () =>
-      new Api({
-        baseUrl: import.meta.env.VITE_API_URL,
-      }),
-    [],
-  );
   const [isLoading, setIsLoading] = useState(true);
+  const [isSessionLoading, setIsSessionLoading] = useState(() => Boolean(getToken()));
+  const [isAuthSubmitting, setIsAuthSubmitting] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const [maps, setMaps] = useState([DEFAULT_MAP]);
   const [currentMap, setCurrentMap] = useState({ title: "New map", layers: [], likes: [], isSaved: false });
   const [mapLoadVersion, setMapLoadVersion] = useState(0);
@@ -38,6 +41,63 @@ function App() {
   const [selectTool, setSelectTool] = useState(null);
   const [brushSize, setBrushSize] = useState(5);
   const [brushSoftness, setBrushSoftness] = useState(0);
+  const api = useMemo(
+    () =>
+      new Api({
+        baseUrl: import.meta.env.VITE_API_URL,
+        request: (url, options) => fetch(url, options),
+        getToken,
+        onUnauthorized: () => window.dispatchEvent(new Event("atlas:session-expired")),
+      }),
+    [],
+  );
+
+  useEffect(() => {
+    const sessionToken = getToken();
+    if (!sessionToken) return undefined;
+
+    let isMounted = true;
+    api
+      .getCurrentUser()
+      .then(({ data }) => {
+        if (isMounted && getToken() === sessionToken) {
+          setCurrentUser(data);
+        }
+      })
+      .catch((error) => {
+        if (!isMounted) return;
+        console.error("Could not restore user session.", error);
+      })
+      .finally(() => {
+        if (isMounted) setIsSessionLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [api]);
+
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      removeToken();
+      setCurrentUser(null);
+      setPopup({
+        title: "Sessão encerrada",
+        children: (
+          <IsNotAuthorized
+            message="Sua sessão expirou. Entre novamente para continuar."
+            showLoginLink
+            handleClosePopup={handleClosePopup}
+          />
+        ),
+      });
+    };
+
+    window.addEventListener("atlas:session-expired", handleSessionExpired);
+    return () => {
+      window.removeEventListener("atlas:session-expired", handleSessionExpired);
+    };
+  }, []);
 
   function normalizeMap(record) {
     return {
@@ -86,6 +146,20 @@ function App() {
   }, [api]);
 
   function handleSaveMap(mapData) {
+    if (!currentUser) {
+      setPopup({
+        title: "Entre na sua conta",
+        children: (
+          <IsNotAuthorized
+            message="Entre para salvar e editar mapas."
+            showLoginLink
+            handleClosePopup={handleClosePopup}
+          />
+        ),
+      });
+      return Promise.resolve();
+    }
+
     setIsLoading(true);
     const saveRequest = currentMap.isSaved ? api.updateMap(currentMap._id, mapData) : api.saveMap(mapData);
 
@@ -146,6 +220,20 @@ function App() {
   );
 
   function handleMapLike(isLiked, mapId) {
+    if (!currentUser) {
+      setPopup({
+        title: "Entre na sua conta",
+        children: (
+          <IsNotAuthorized
+            message="Entre para curtir mapas."
+            showLoginLink
+            handleClosePopup={handleClosePopup}
+          />
+        ),
+      });
+      return;
+    }
+
     return api
       .changeMapLike(mapId, isLiked)
       .then(() => {
@@ -159,10 +247,28 @@ function App() {
       })
       .catch((error) => {
         console.error("Could not update map like.", error);
+        setPopup({
+          title: "Não foi possível curtir o mapa",
+          children: <IsNotAuthorized message={error.message} />,
+        });
       });
   }
 
   function handleMapDelete(map) {
+    if (!currentUser || String(map.owner) !== String(currentUser._id)) {
+      setPopup({
+        title: "Ação não permitida",
+        children: (
+          <IsNotAuthorized
+            message="Você só pode excluir mapas criados pela sua conta."
+            showLoginLink={!currentUser}
+            handleClosePopup={handleClosePopup}
+          />
+        ),
+      });
+      return;
+    }
+
     setIsLoading(true);
     return api
       .deleteMap(map._id)
@@ -174,6 +280,10 @@ function App() {
       })
       .catch((error) => {
         console.error("Could not delete map.", error);
+        setPopup({
+          title: "Não foi possível excluir o mapa",
+          children: <IsNotAuthorized message={error.message} />,
+        });
       })
       .finally(() => {
         setIsLoading(false);
@@ -232,6 +342,59 @@ function App() {
     setPopup(null);
   }
 
+  function handleSignup(email, password) {
+    setIsAuthSubmitting(true);
+    return api
+      .signup({ email, password })
+      .then(() => {
+        setPopup({
+          children: <IsAuthorized handleClosePopup={handleClosePopup} />,
+        });
+      })
+      .catch((error) => {
+        setPopup({
+          children: <IsNotAuthorized message={error.message} />,
+        });
+      })
+      .finally(() => setIsAuthSubmitting(false));
+  }
+
+  function handleSignin(email, password) {
+    setIsAuthSubmitting(true);
+    return api
+      .signin({ email, password })
+      .then(({ token }) => {
+        if (!token) throw new Error("The server did not return an access token.");
+        setToken(token);
+        return api
+          .getCurrentUser()
+          .then(({ data }) => {
+            if (!data) throw new Error("The server did not return the user profile.");
+            setCurrentUser(data);
+            setPopup(null);
+            navigate(location.state?.from?.pathname || "/", { replace: true });
+          })
+          .catch((error) => {
+            removeToken();
+            throw error;
+          });
+      })
+      .catch((error) => {
+        setPopup({
+          children: <IsNotAuthorized message={error.message} />,
+        });
+      })
+      .finally(() => setIsAuthSubmitting(false));
+  }
+
+  function handleLogout() {
+    removeToken();
+    setCurrentUser(null);
+    setCurrentMap({ title: "New map", layers: [], likes: [], isSaved: false });
+    setPopup(null);
+    navigate("/");
+  }
+
   function handleSelectTool(tool) {
     setSelectTool(tool);
   }
@@ -281,12 +444,59 @@ function App() {
         value={{
           isLoading,
           currentUser,
+          handleOpenPopup,
         }}
       >
-        <Header />
-        <Navigation handleArrowClick={handleArrowClick} isOpen={isOpen.navigation} />
+        <Header currentUser={currentUser} onLogout={handleLogout} />
+        {!["/login", "/signup"].includes(pathname) && (
+          <Navigation handleArrowClick={handleArrowClick} isOpen={isOpen.navigation} />
+        )}
         <Routes>
-          <Route path="/" element={mapEditor} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute
+                isLoggedIn={Boolean(currentUser)}
+                isLoading={isSessionLoading}
+              >
+                {mapEditor}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <ProtectedRoute
+                isLoggedIn={Boolean(currentUser)}
+                isLoading={isSessionLoading}
+                anonymous
+              >
+                <Login
+                  popup={popup}
+                  handleClosePopup={handleClosePopup}
+                  handleSignin={handleSignin}
+                  isSubmitting={isAuthSubmitting}
+                />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <ProtectedRoute
+                isLoggedIn={Boolean(currentUser)}
+                isLoading={isSessionLoading}
+                anonymous
+              >
+                <Register
+                  popup={popup}
+                  handleClosePopup={handleClosePopup}
+                  handleSignup={handleSignup}
+                  isSubmitting={isAuthSubmitting}
+                />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/about" element={<About />} />
           <Route
             path="/maps"
@@ -304,9 +514,14 @@ function App() {
           <Route
             path="/maps/:mapId"
             element={
-              <MapDetailRoute loadMap={handleLoadMap} loadedMapId={loadedMapId}>
-                {mapEditor}
-              </MapDetailRoute>
+              <ProtectedRoute
+                isLoggedIn={Boolean(currentUser)}
+                isLoading={isSessionLoading}
+              >
+                <MapDetailRoute loadMap={handleLoadMap} loadedMapId={loadedMapId}>
+                  {mapEditor}
+                </MapDetailRoute>
+              </ProtectedRoute>
             }
           />
         </Routes>

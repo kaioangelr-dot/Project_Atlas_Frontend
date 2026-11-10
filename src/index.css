@@ -14,4 +14,5 @@
 @import url("./components/Maps/Map/map.css");
 @import url("./components/Main/Components/MapCanvas/mapcanvas.css");
 @import url("./components/Popup/popup.css");
+@import url("./components/pages/auth-pages.css");
 @import url("./components/Footer/footer.css");

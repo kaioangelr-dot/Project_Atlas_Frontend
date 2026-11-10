@@ -109,6 +109,22 @@
   word-break: break-word;
 }
 
+.header__auth-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.header__auth-links a {
+  color: var(--text-primary);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.header__auth-links a:hover {
+  color: var(--color-active-shadow);
+}
+
 .header__logout-btn {
   color: var(--text-muted);
   border: none;

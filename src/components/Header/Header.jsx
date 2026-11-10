@@ -1,7 +1,8 @@
 import { useState } from "react";
 import logo from "../../images/atla-head.svg";
+import { Link } from "react-router-dom";
 
-export default function Header() {
+export default function Header({ currentUser, onLogout }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -24,10 +25,23 @@ export default function Header() {
 
           {isMenuOpen && (
             <div className="header__menu-panel" role="menu" aria-label="user options">
-              <p className="header__email">user@example.com</p>
-              <button type="button" className="header__logout-btn">
-                leave
-              </button>
+              {currentUser ? (
+                <>
+                  <p className="header__email">{currentUser.email}</p>
+                  <button
+                    type="button"
+                    className="header__logout-btn"
+                    onClick={onLogout}
+                  >
+                    Sair
+                  </button>
+                </>
+              ) : (
+                <div className="header__auth-links">
+                  <Link to="/login">Entrar</Link>
+                  <Link to="/signup">Criar conta</Link>
+                </div>
+              )}
             </div>
           )}
         </div>

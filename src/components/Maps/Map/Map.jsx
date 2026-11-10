@@ -5,13 +5,15 @@ import ConfirmationPopup from "../../Popup/components/PopupWithConfirmation/Popu
 import { Link } from "react-router-dom";
 
 export default function Map(props) {
-  const { title, link, likes, /* owner, isDefault, */ _id: mapId } = props.map;
+  const { title, link, likes, owner, _id: mapId } = props.map;
   const { onOpenPopup, onClosePopup, onmapLike, onmapDelete } = props;
 
   const { currentUser } = useContext(CurrentUserContext);
 
-  const currentUserId = String(currentUser._id);
-  const isLiked = likes.some((user) => String(user) === currentUserId);
+  const currentUserId = currentUser?._id ? String(currentUser._id) : null;
+  const isLiked = currentUserId
+    ? likes.some((user) => String(user) === currentUserId)
+    : false;
 
   const deleteConfirmation = {
     title: "Are you sure?",
@@ -34,14 +36,14 @@ export default function Map(props) {
       <Link to={`/maps/${mapId}`}>
         <img className="map__image" src={link} alt={`map of ${title}`} />
       </Link>
-      {/* {currentUserId === owner && ( */}
-      <button
-        aria-label="Delete map"
-        className="map__delete-button"
-        type="button"
-        onClick={() => onOpenPopup(deleteConfirmation)}
-      ></button>
-      {/* )} */}
+      {currentUserId && String(owner) === currentUserId && (
+        <button
+          aria-label="Delete map"
+          className="map__delete-button"
+          type="button"
+          onClick={() => onOpenPopup(deleteConfirmation)}
+        ></button>
+      )}
       <div className="map__description">
         <h2 className="map__title">{title}</h2>
         <span className="map__like-counter">{likes.length > 0 ? likes.length : ""}</span>

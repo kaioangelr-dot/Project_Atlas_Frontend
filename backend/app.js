@@ -62,10 +62,6 @@ mongoose
 app.post('/signin', validateSignin, login);
 app.post('/signup', validateSignup, createUser);
 
-// Enable authentication here after login is connected to the frontend.
-// const auth = require('./middlewares/auth');
-// app.use(auth);
-
 app.use('/users', usersRouter);
 app.use('/maps', mapsRouter);
 

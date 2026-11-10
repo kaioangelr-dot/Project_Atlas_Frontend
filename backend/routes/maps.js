@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const auth = require('../middlewares/auth');
 const {
   getMaps,
   getMap,
@@ -101,11 +102,11 @@ const validateMapUpdate = celebrate({
 });
 
 router.get('/', getMaps);
-router.post('/', validateNewMap, createMap);
+router.post('/', auth, validateNewMap, createMap);
 router.get('/:mapId', mapIdParams, getMap);
-router.patch('/:mapId', mapIdParams, validateMapUpdate, updateMap);
-router.delete('/:mapId', mapIdParams, deleteMap);
-router.put('/:mapId/likes', mapIdParams, likeMap);
-router.delete('/:mapId/likes', mapIdParams, unlikeMap);
+router.patch('/:mapId', auth, mapIdParams, validateMapUpdate, updateMap);
+router.delete('/:mapId', auth, mapIdParams, deleteMap);
+router.put('/:mapId/likes', auth, mapIdParams, likeMap);
+router.delete('/:mapId/likes', auth, mapIdParams, unlikeMap);
 
 module.exports = router;

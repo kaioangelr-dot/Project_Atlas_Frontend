@@ -140,6 +140,26 @@
   margin: 32px auto;
 }
 
+.popup__auth-icon {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  margin: 10px auto 24px;
+  border: 4px solid currentColor;
+  border-radius: 50%;
+  font-size: 44px;
+  font-weight: 700;
+}
+
+.popup__auth-icon_success {
+  color: var(--action-success-shadow);
+}
+
+.popup__auth-icon_error {
+  color: var(--action-cta);
+}
+
 .popup__auth-text {
   text-align: center;
   margin: 0 auto;
@@ -147,6 +167,18 @@
   font-weight: 900;
   line-height: 1;
   margin-bottom: 30px;
+}
+
+.popup__login-link {
+  align-self: center;
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.popup__login-link:hover {
+  color: var(--color-active-shadow);
 }
 
 @media screen and (max-width: 544px) {

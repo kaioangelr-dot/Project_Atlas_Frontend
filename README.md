@@ -6,8 +6,6 @@
 
 **Project Atlas** is a browser-based editor for creating and exploring fictional maps. Draw places and paths, add labels and images, organize map elements into layers, and save your work through the maps API.
 
-The Maps page includes a sample map named **Westeros**. It is a local example and does not need to be saved in the API to appear in the gallery.
-
 ## Artwork
 
 The Atlas logos, Atlas character artwork, tools, cloud illustrations, etc... were drawn by the project author.
@@ -19,8 +17,6 @@ The Atlas logos, Atlas character artwork, tools, cloud illustrations, etc... wer
   &nbsp;&nbsp;&nbsp;
   <img src="./src/images/clouds2.png" alt="Hand-drawn clouds" height="100" />
 </p>
-
-The Westeros sample map uses an image hosted by [A Wiki of Ice and Fire](https://awoiaf.westeros.org/). It is loaded from its source URL and is not part of the original Atlas artwork.
 
 ## Features
 
@@ -96,11 +92,8 @@ npm install
 npm run dev
 ```
 
-Authentication middleware is intentionally disabled while the frontend has no
-login flow. To enable it later, connect the frontend login flow and uncomment
-the authentication setup in `backend/app.js`. Maps created without a signed-in
-user have no owner; temporary anonymous likes use the frontend's placeholder
-user ID.
+The frontend includes sign-up and login flows and requires an authenticated
+user for map actions. It does not create a temporary or anonymous user.
 
 ## API configuration
 
@@ -119,9 +112,8 @@ The API exchanges JSON and returns map records directly (a JSON array for
 `GET /maps`, one object for map detail/create/update). A saved map is submitted
 as `{ "name": "...", "image": "...", "map": { "layers": [] } }`. `image` may
 be an HTTP(S) URL or the JPEG data URL generated from the canvas. Layers preserve
-their pins, drawings, labels, images, and visibility settings. The sample
-Westeros map is bundled into the frontend and remains available if the API is
-empty or unreachable.
+their pins, drawings, labels, images, and visibility settings. The Maps page
+shows maps returned by the API.
 
 ## Available scripts
 

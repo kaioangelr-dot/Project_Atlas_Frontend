@@ -19,7 +19,6 @@ import IsAuthorized from "./Popup/components/InfoToolTip/components/IsAuthorized
 import IsNotAuthorized from "./Popup/components/InfoToolTip/components/IsNotAuthorized";
 import Api from "../utils/api";
 import { getToken, removeToken, setToken } from "../utils/token";
-import { DEFAULT_MAP, DEFAULT_MAP_ID } from "../utils/defaultMap";
 
 function App() {
   const location = useLocation();
@@ -31,7 +30,7 @@ function App() {
   const [isSessionLoading, setIsSessionLoading] = useState(() => Boolean(getToken()));
   const [isAuthSubmitting, setIsAuthSubmitting] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [maps, setMaps] = useState([DEFAULT_MAP]);
+  const [maps, setMaps] = useState([]);
   const [currentMap, setCurrentMap] = useState({ title: "New map", layers: [], likes: [], isSaved: false });
   const [mapLoadVersion, setMapLoadVersion] = useState(0);
   const [loadedMapId, setLoadedMapId] = useState(null);
@@ -130,7 +129,7 @@ function App() {
       .then((records) => {
         const loadedMaps = records.map(normalizeMapSummary);
         if (isMounted) {
-          setMaps([DEFAULT_MAP, ...loadedMaps.filter((map) => map._id !== DEFAULT_MAP_ID)]);
+          setMaps(loadedMaps);
         }
       })
       .catch((error) => {
@@ -196,10 +195,10 @@ function App() {
       mapLoadRequest.current = requestId;
       setIsLoading(true);
       setLoadedMapId(null);
-      const mapRequest = mapId === DEFAULT_MAP_ID ? Promise.resolve(DEFAULT_MAP) : api.getMapById(mapId);
-      return mapRequest
+      return api
+        .getMapById(mapId)
         .then((response) => {
-          const loadedMap = mapId === DEFAULT_MAP_ID ? response : normalizeMap(response);
+          const loadedMap = normalizeMap(response);
           if (requestId !== mapLoadRequest.current) return;
           setCurrentMap(loadedMap);
           setLoadedMapId(loadedMap._id);
@@ -327,7 +326,7 @@ function App() {
     if (
       pathname === "/" &&
       previousPathname.current !== "/" &&
-      (currentMap.isSaved || currentMap._id === DEFAULT_MAP_ID)
+      currentMap.isSaved
     ) {
       setCurrentMap({ title: "New map", layers: [], likes: [], isSaved: false });
     }

@@ -27,6 +27,7 @@ The Atlas logos, Atlas character artwork, tools, cloud illustrations, etc... wer
 - Zoom and pan around the canvas.
 - Browse maps, like them, and delete maps you own.
 - Save new maps and update existing maps using the configured API. A preview is generated automatically from the map canvas.
+- Sign up and sign in with an email and password. Sign-up requires a matching password confirmation.
 
 ### Keyboard shortcuts
 
@@ -74,26 +75,10 @@ npm run dev
 
 Vite prints the local URL in the terminal when the server is ready.
 
-### Run the backend
-
-The Express backend lives in `backend`. Configure `backend/.env` with a MongoDB
-connection string before starting it:
-
-```env
-MONGO_URI=mongodb://127.0.0.1:27017/project-atlas
-PORT=3000
-```
-
-Then install and start the backend from that directory:
-
-```bash
-cd backend
-npm install
-npm run dev
-```
-
-The frontend includes sign-up and login flows and requires an authenticated
-user for map actions. It does not create a temporary or anonymous user.
+The API is configured separately from this frontend repository. Start a
+compatible API at the URL set in `VITE_API_URL` before using sign-up, login, or
+map features. Creating and editing maps requires an authenticated user; the app
+does not create a temporary or anonymous user.
 
 ## API configuration
 
@@ -101,6 +86,9 @@ The frontend reads `VITE_API_URL` and expects the API to provide:
 
 | Method           | Endpoint             | Purpose              |
 | ---------------- | -------------------- | -------------------- |
+| `POST`           | `/signup`            | Create an account    |
+| `POST`           | `/signin`            | Sign in and get a token |
+| `GET`            | `/users/me`          | Get the current user |
 | `GET`            | `/maps`              | List maps            |
 | `GET`            | `/maps/:mapId`       | Load a map           |
 | `POST`           | `/maps`              | Save a map           |
@@ -113,7 +101,9 @@ The API exchanges JSON and returns map records directly (a JSON array for
 as `{ "name": "...", "image": "...", "map": { "layers": [] } }`. `image` may
 be an HTTP(S) URL or the JPEG data URL generated from the canvas. Layers preserve
 their pins, drawings, labels, images, and visibility settings. The Maps page
-shows maps returned by the API.
+shows maps returned by the API. Protected requests use a bearer token returned
+by `/signin`. The sign-up form checks that the password confirmation matches
+before submitting credentials.
 
 ## Available scripts
 

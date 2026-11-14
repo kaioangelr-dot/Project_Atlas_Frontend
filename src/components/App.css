@@ -6,7 +6,7 @@
 
 .app {
   background-color: var(--main-bg);
-  height: 100vh;
+  min-height: 100vh;
   max-width: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

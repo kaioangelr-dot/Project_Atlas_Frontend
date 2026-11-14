@@ -1,6 +1,16 @@
 .auth-page {
+  width: 100%;
+  min-height: 100vh;
+  background-image: url("../../images/sign-background.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.auth-page__container {
   width: min(440px, calc(100% - 32px));
-  margin: 175px auto 48px;
+
+  margin: 175px 258px 48px auto;
   padding: 34px 38px;
   color: var(--text-primary);
   background-color: var(--sec-bg);
@@ -35,15 +45,21 @@
   margin-bottom: 22px;
   padding: 0 12px;
   color: var(--text-primary);
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 0;
   font: inherit;
+  box-sizing: border-box;
+}
+
+.auth-page__input::placeholder {
+  color: rgba(0, 0, 0, 0.4);
 }
 
 .auth-page__input:focus {
-  outline: 2px solid var(--color-active);
-  outline-offset: 1px;
+  outline: none;
+  border-bottom: 2px solid var(--color-active);
 }
 
 .auth-page__button {
@@ -64,8 +80,15 @@
 }
 
 .auth-page__button:disabled {
-  cursor: wait;
-  opacity: 0.6;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: rgba(0, 0, 0, 0.28);
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.auth-page__button:disabled:hover {
+  opacity: 1;
 }
 
 .auth-page__switch {
@@ -85,7 +108,7 @@
 }
 
 @media screen and (max-width: 544px) {
-  .auth-page {
+  .auth-page__container {
     margin-top: 120px;
     padding: 28px 22px;
   }

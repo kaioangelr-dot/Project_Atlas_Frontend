@@ -37,15 +37,17 @@
 }
 
 .popup__button:disabled {
-  background-color: transparent;
-  border: 1px solid var(--border);
-  color: rgba(0, 0, 0, 0.2);
+  background: var(--action-cta);
+  border: none;
+  color: var(--text-sec);
+  opacity: 0.8;
+  cursor: wait;
 }
 
 .popup__button:disabled:hover {
   scale: 1;
   box-shadow: none;
-  cursor: auto;
+  cursor: wait;
 }
 
 .popup__close {

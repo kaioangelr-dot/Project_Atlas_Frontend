@@ -107,9 +107,14 @@
   text-decoration: underline;
 }
 
+@media screen and (max-width: 1200px) {
+  .auth-page__container {
+    margin: 100px auto 30px;
+  }
+}
+
 @media screen and (max-width: 544px) {
   .auth-page__container {
-    margin-top: 120px;
     padding: 28px 22px;
   }
 

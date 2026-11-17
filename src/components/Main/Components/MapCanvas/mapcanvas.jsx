@@ -18,6 +18,7 @@ export default function MapCanvas(props) {
     selectTool,
     layers: initialLayers,
   } = props;
+  const activeSelectTool = isMapOwner ? selectTool : null;
 
   const { viewportRef: stageViewportRef, stageDisplay } = useStageDisplay();
 
@@ -63,7 +64,7 @@ export default function MapCanvas(props) {
     wasDraggedRef,
     handlePinClick,
     handleUndo,
-  } = useMapCanvas({ ...props, initialLayers, displayScale: stageDisplay.scale });
+  } = useMapCanvas({ ...props, selectTool: activeSelectTool, initialLayers, displayScale: stageDisplay.scale });
   const handleOpenSaveDialog = createSaveMapHandler({
     onOpen,
     mapTitle,
@@ -83,34 +84,38 @@ export default function MapCanvas(props) {
         isMapOwner={isMapOwner}
       />
 
-      <LayerPanel
-        layers={layers}
-        activeLayerId={activeLayerId}
-        isOpen={isLayerPanelOpen}
-        onAddLayer={addLayer}
-        onSelectLayer={setActiveLayerId}
-        onToggleVisibility={toggleLayerVisibility}
-        onDeleteLayer={deleteLayer}
-      />
+      {isMapOwner && (
+        <LayerPanel
+          layers={layers}
+          activeLayerId={activeLayerId}
+          isOpen={isLayerPanelOpen}
+          onAddLayer={addLayer}
+          onSelectLayer={setActiveLayerId}
+          onToggleVisibility={toggleLayerVisibility}
+          onDeleteLayer={deleteLayer}
+        />
+      )}
 
-      <TextEditor
-        editor={textEditor}
-        draft={textDraft}
-        inputRef={textInputRef}
-        stageScale={stageScale}
-        stagePos={stagePos}
-        displayScale={stageDisplay.scale}
-        displayOffsetX={stageDisplay.offsetX}
-        displayOffsetY={stageDisplay.offsetY}
-        onDraftChange={setTextDraft}
-        onFinish={finishTextEditing}
-        onCancel={cancelTextEditing}
-      />
+      {isMapOwner && (
+        <TextEditor
+          editor={textEditor}
+          draft={textDraft}
+          inputRef={textInputRef}
+          stageScale={stageScale}
+          stagePos={stagePos}
+          displayScale={stageDisplay.scale}
+          displayOffsetX={stageDisplay.offsetX}
+          displayOffsetY={stageDisplay.offsetY}
+          onDraftChange={setTextDraft}
+          onFinish={finishTextEditing}
+          onCancel={cancelTextEditing}
+        />
+      )}
 
       <div className="map-canvas__stage-viewport" ref={stageViewportRef}>
         <MapStage
           layers={layers}
-          selectTool={selectTool}
+          selectTool={activeSelectTool}
           stageScale={stageScale}
           stagePos={stagePos}
           displayScale={stageDisplay.scale}

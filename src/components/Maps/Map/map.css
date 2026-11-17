@@ -56,29 +56,51 @@
   border: none;
   padding: 0;
   margin: 0;
+  transition: 0.2s ease;
 }
 
 .map__like-button:hover {
   opacity: 0.5;
-  cursor: pointer;
 }
 
+.map__preview-button,
 .map__delete-button {
   width: 18px;
   height: 18px;
-  background: transparent url("../../../images/delete-icon.svg") center no-repeat;
-  background-size: 18px 18px;
   border: none;
   cursor: pointer;
   position: absolute;
   top: 18px;
-  right: 15px;
   padding: 0;
   margin: 0;
+  transition: 0.2s ease;
 }
 
+.map__preview-button {
+  width: 25.74px;
+  height: 25.74px;
+  top: 14.13px;
+  left: 11.13px;
+  background: transparent url("../../../images/eye.svg") center no-repeat;
+  background-size: 25.74px 25.74px;
+}
+
+.map__delete-button {
+  right: 15px;
+  background: transparent url("../../../images/delete-icon.svg") center no-repeat;
+  background-size: 18px 18px;
+}
+
+.map__preview-button:hover,
 .map__delete-button:hover {
   opacity: 0.6;
+}
+
+.map__like-button:hover,
+.map__preview-button:hover,
+.map__delete-button:hover {
+  scale: 1.2;
+  cursor: pointer;
 }
 
 .map__like-button_is-active {

@@ -26,6 +26,7 @@ function App() {
   const navigate = useNavigate();
   const previousPathname = useRef(pathname);
   const mapLoadRequest = useRef(0);
+  const readOnlyMapPreviewId = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSessionLoading, setIsSessionLoading] = useState(() => Boolean(getToken()));
   const [isAuthSubmitting, setIsAuthSubmitting] = useState(false);
@@ -202,7 +203,8 @@ function App() {
           const loadedMap = normalizeMap(response);
           if (requestId !== mapLoadRequest.current) return;
           setCurrentMap(loadedMap);
-          setIsMapOwner(Boolean(currentUser?._id && String(loadedMap.owner) === String(currentUser._id)));
+          const isOwner = Boolean(currentUser?._id && String(loadedMap.owner) === String(currentUser._id));
+          setIsMapOwner(isOwner && readOnlyMapPreviewId.current !== String(mapId));
           setLoadedMapId(loadedMap._id);
           setMapLoadVersion((version) => version + 1);
           setMaps((currentMaps) =>
@@ -382,6 +384,7 @@ function App() {
 
   function handleLogout() {
     removeToken();
+    readOnlyMapPreviewId.current = null;
     setCurrentUser(null);
     setCurrentMap({ title: "New map", layers: [], likes: [], isSaved: false });
     setPopup(null);
@@ -397,6 +400,8 @@ function App() {
   }
 
   function handleIsMapOwner(mapId = null) {
+    readOnlyMapPreviewId.current = null;
+
     if (mapId == null) {
       setIsMapOwner(true);
       return;
@@ -407,6 +412,12 @@ function App() {
       selectedMap && currentUser?._id && String(selectedMap.owner) === String(currentUser._id),
     );
     return setIsMapOwner(isOwnerCheck);
+  }
+
+  function handlePreviewMap(mapId) {
+    readOnlyMapPreviewId.current = String(mapId);
+    setIsMapOwner(false);
+    navigate(`/maps/${mapId}`);
   }
 
   const mapEditor = (
@@ -511,6 +522,7 @@ function App() {
                 onmapLike={handleMapLike}
                 onmapDelete={handleMapDelete}
                 handleIsMapOwner={handleIsMapOwner}
+                onPreviewMap={handlePreviewMap}
               />
             }
           />

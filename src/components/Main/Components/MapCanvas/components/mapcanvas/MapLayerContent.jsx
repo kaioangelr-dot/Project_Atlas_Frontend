@@ -75,10 +75,10 @@ function MapLayerContent({
           image={image}
           nodeRef={registerImageNode}
           onNodeReady={notifyImageNodeReady}
-          draggable={selectTool === "image"}
-          listening={selectTool === "image"}
+          draggable={isMapOwner && selectTool === "image"}
+          listening={isMapOwner && selectTool === "image"}
           onSelect={(event) => {
-            if (selectTool !== "image" || event.evt.button !== 0) return;
+            if (!isMapOwner || selectTool !== "image" || event.evt.button !== 0) return;
             event.cancelBubble = true;
             setSelectedLabel(null);
             setSelectedImage({ id: image.id, layerId: layer.id });
@@ -123,7 +123,7 @@ function MapLayerContent({
           {...getMapLabelStyle(label)}
           scaleX={label.scaleX || 1}
           scaleY={label.scaleY || 1}
-          draggable={selectTool === "quill"}
+          draggable={isMapOwner && selectTool === "quill"}
           onDragStart={(event) => {
             if (selectTool !== "quill" || event.evt.button !== 0) {
               event.target.stopDrag();
@@ -148,7 +148,7 @@ function MapLayerContent({
             );
           }}
           onClick={(event) => {
-            if (event.evt.button !== 0) return;
+            if (!isMapOwner || event.evt.button !== 0) return;
             event.cancelBubble = true;
             onLabelClick(label, layer.id);
           }}
@@ -227,7 +227,8 @@ function MapLayerContent({
         );
       })}
 
-      {(selectedLabel?.layerId === layer.id || (selectedImage?.layerId === layer.id && selectTool === "image")) && (
+      {isMapOwner &&
+        (selectedLabel?.layerId === layer.id || (selectedImage?.layerId === layer.id && selectTool === "image")) && (
         <Transformer
           ref={transformerRef}
           keepRatio
@@ -262,7 +263,7 @@ function MapLayerContent({
             }
           }}
         />
-      )}
+        )}
     </>
   );
 }

@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 export default function Map(props) {
   const { title, link, likes, owner, _id: mapId } = props.map;
-  const { onOpenPopup, onClosePopup, onmapLike, onmapDelete, handleIsMapOwner } = props;
+  const { onOpenPopup, onClosePopup, onmapLike, onmapDelete, handleIsMapOwner, onPreviewMap } = props;
 
   const { currentUser } = useContext(CurrentUserContext);
 
@@ -35,12 +35,21 @@ export default function Map(props) {
         <img className="map__image" src={link} alt={`map of ${title}`} />
       </Link>
       {currentUserId && String(owner) === currentUserId && (
-        <button
-          aria-label="Delete map"
-          className="map__delete-button"
-          type="button"
-          onClick={() => onOpenPopup(deleteConfirmation)}
-        ></button>
+        <>
+          <button
+            aria-label="Preview map as viewer"
+            className="map__preview-button"
+            title="Preview as viewer"
+            type="button"
+            onClick={() => onPreviewMap(mapId)}
+          ></button>
+          <button
+            aria-label="Delete map"
+            className="map__delete-button"
+            type="button"
+            onClick={() => onOpenPopup(deleteConfirmation)}
+          ></button>
+        </>
       )}
       <div className="map__description">
         <h2 className="map__title">{title}</h2>

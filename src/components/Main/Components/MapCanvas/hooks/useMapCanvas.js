@@ -48,6 +48,8 @@ export default function useMapCanvas({
         return;
       }
 
+      if (!isMapOwner) return;
+
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z") {
         event.preventDefault();
         handleUndo();
@@ -85,7 +87,7 @@ export default function useMapCanvas({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleUndo, onSelectTool, onToggleLayers]);
+  }, [handleUndo, isMapOwner, onSelectTool, onToggleLayers]);
 
   return {
     ...mapLayers,

@@ -7,17 +7,19 @@ export default function CanvasControls({ onSave, onUndo, canUndo, onZoom, isMapO
             Save
           </button>
         )}
-        <button
-          type="button"
-          className="map-canvas__control"
-          title="Undo (Ctrl+Z)"
-          aria-label="Undo last change (Ctrl+Z)"
-          aria-keyshortcuts="Control+Z Meta+Z"
-          onClick={onUndo}
-          disabled={!canUndo}
-        >
-          Undo
-        </button>
+        {isMapOwner && (
+          <button
+            type="button"
+            className="map-canvas__control"
+            title="Undo (Ctrl+Z)"
+            aria-label="Undo last change (Ctrl+Z)"
+            aria-keyshortcuts="Control+Z Meta+Z"
+            onClick={onUndo}
+            disabled={!canUndo}
+          >
+            Undo
+          </button>
+        )}
       </div>
       <div className="main__zoom">
         <button

@@ -6,14 +6,12 @@ import { Link } from "react-router-dom";
 
 export default function Map(props) {
   const { title, link, likes, owner, _id: mapId } = props.map;
-  const { onOpenPopup, onClosePopup, onmapLike, onmapDelete } = props;
+  const { onmapLike, onmapDelete } = props;
 
   const { currentUser } = useContext(CurrentUserContext);
 
   const currentUserId = currentUser?._id ? String(currentUser._id) : null;
-  const isLiked = currentUserId
-    ? likes.some((user) => String(user) === currentUserId)
-    : false;
+  const isLiked = currentUserId ? likes.some((user) => String(user) === currentUserId) : false;
 
   const deleteConfirmation = {
     title: "Are you sure?",

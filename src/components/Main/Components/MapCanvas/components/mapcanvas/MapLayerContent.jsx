@@ -179,8 +179,19 @@ function MapLayerContent({
               event.target.getStage().container().style.cursor = "default";
             }}
             onClick={(event) => onPinClick(pin, layer.id, event)}
+            onContextMenu={(event) => {
+              event.evt.preventDefault();
+              event.cancelBubble = true;
+              if (!isMapOwner) return;
+
+              updateLayer(layer.id, (currentLayer) => ({
+                ...currentLayer,
+                pins: currentLayer.pins.filter((currentPin) => currentPin.id !== pin.id),
+              }));
+              setHoveredPinId(null);
+            }}
             onDragStart={(event) => {
-              if (event.evt.button !== 0) {
+              if (!isMapOwner || event.evt.button !== 0) {
                 event.target.stopDrag();
                 return;
               }
@@ -188,6 +199,8 @@ function MapLayerContent({
               recordUndo();
             }}
             onDragEnd={(event) => {
+              if (!isMapOwner || event.evt.button !== 0) return;
+
               updateLayer(
                 layer.id,
                 (currentLayer) => ({

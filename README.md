@@ -23,6 +23,7 @@ The Atlas logos, Atlas character artwork, tools, cloud illustrations, etc... wer
 - Create and edit fictional maps on a fixed-coordinate canvas that adapts to the viewport.
 - Draw with a configurable brush and erase strokes.
 - Add pins with location details, text labels, and images from URLs.
+- Map owners can remove pins with a right-click; the deletion can be undone and is persisted when the map is saved. Non-owners can view pin details without editing them.
 - Organize map content into layers, toggle layer visibility, and undo recent edits.
 - Zoom and pan around the canvas.
 - Browse maps, like them, and delete maps you own.

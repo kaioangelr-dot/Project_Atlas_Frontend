@@ -31,6 +31,7 @@ export default function MapStage({
   recordUndo,
   wasDraggedRef,
   onPinClick,
+  isMapOwner,
 }) {
   const layerContentProps = {
     selectTool,
@@ -51,6 +52,7 @@ export default function MapStage({
     recordUndo,
     wasDraggedRef,
     onPinClick,
+    isMapOwner,
   };
 
   return (

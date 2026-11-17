@@ -10,6 +10,7 @@ import useStageDisplay from "./hooks/useStageDisplay";
 export default function MapCanvas(props) {
   const {
     mapTitle,
+    isMapOwner,
     onSaveMap,
     isSaving,
     onOpen,
@@ -79,6 +80,7 @@ export default function MapCanvas(props) {
         onUndo={handleUndo}
         canUndo={canUndo}
         onZoom={zoom}
+        isMapOwner={isMapOwner}
       />
 
       <LayerPanel
@@ -135,6 +137,7 @@ export default function MapCanvas(props) {
           recordUndo={recordUndo}
           wasDraggedRef={wasDraggedRef}
           onPinClick={handlePinClick}
+          isMapOwner={isMapOwner}
         />
       </div>
       <PinPreview

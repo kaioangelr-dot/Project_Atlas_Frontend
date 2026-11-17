@@ -53,13 +53,17 @@
   transition: opacity 0.2s ease;
 }
 
-.main__title-input:hover {
+.main__title_editable .main__title-input:hover {
   opacity: 0.3;
 }
 
-.main__title:focus-within .main__title-input {
+.main__title_editable:focus-within .main__title-input {
   opacity: 1;
   cursor: text;
+}
+
+.main__title-input:disabled {
+  cursor: default;
 }
 
 .main__title-edit-icon {
@@ -88,7 +92,7 @@
   height: 14px;
 }
 
-.main__title:hover .main__title-edit-icon {
+.main__title_editable:hover .main__title-edit-icon {
   opacity: 1;
   transform: translate(0, -50%);
 }

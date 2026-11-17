@@ -1,10 +1,12 @@
-export default function CanvasControls({ onSave, onUndo, canUndo, onZoom }) {
+export default function CanvasControls({ onSave, onUndo, canUndo, onZoom, isMapOwner }) {
   return (
     <>
       <div className="map-canvas__controls">
-        <button type="button" className="map-canvas__control" onClick={onSave}>
-          Save
-        </button>
+        {isMapOwner && (
+          <button type="button" className="map-canvas__control" onClick={onSave}>
+            Save
+          </button>
+        )}
         <button
           type="button"
           className="map-canvas__control"

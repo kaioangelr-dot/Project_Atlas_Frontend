@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 export default function Map(props) {
   const { title, link, likes, owner, _id: mapId } = props.map;
-  const { onmapLike, onmapDelete } = props;
+  const { onOpenPopup, onClosePopup, onmapLike, onmapDelete, handleIsMapOwner } = props;
 
   const { currentUser } = useContext(CurrentUserContext);
 
@@ -31,7 +31,7 @@ export default function Map(props) {
 
   return (
     <li className="map">
-      <Link to={`/maps/${mapId}`}>
+      <Link to={`/maps/${mapId}`} onClick={() => handleIsMapOwner(mapId)}>
         <img className="map__image" src={link} alt={`map of ${title}`} />
       </Link>
       {currentUserId && String(owner) === currentUserId && (

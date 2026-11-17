@@ -5,6 +5,7 @@ import editIcon from "../../images/edit.svg";
 export default function Main(props) {
   const {
     mapTitle,
+    isMapOwner,
     onSaveMap,
     onMapTitleChange,
     isSaving,
@@ -24,6 +25,7 @@ export default function Main(props) {
       <section className="main__map">
         <MapCanvas
           mapTitle={mapTitle}
+          isMapOwner={isMapOwner}
           onSaveMap={onSaveMap}
           isSaving={isSaving}
           onOpen={onOpen}
@@ -35,20 +37,23 @@ export default function Main(props) {
           selectTool={selectTool}
           layers={layers}
         />
-        <h1 className="main__title">
+        <h1 className={`main__title ${isMapOwner ? "main__title_editable" : ""}`}>
           <input
             type="text"
             className="main__title-input"
             aria-label="Map title"
             spellCheck={false}
+            disabled={!isMapOwner}
             value={mapTitle}
             size={Math.max(mapTitle.length, 1)}
             maxLength={60}
             onChange={(event) => onMapTitleChange(event.target.value)}
           />
-          <span className="main__title-edit-icon" aria-hidden="true">
-            <img src={editIcon} alt="" />
-          </span>
+          {isMapOwner && (
+            <span className="main__title-edit-icon" aria-hidden="true">
+              <img src={editIcon} alt="" />
+            </span>
+          )}
         </h1>
         {popup && (
           <Popup onClose={onClose} title={popup.title}>

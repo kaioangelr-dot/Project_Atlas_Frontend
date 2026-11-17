@@ -40,6 +40,7 @@ function App() {
   const [selectTool, setSelectTool] = useState(null);
   const [brushSize, setBrushSize] = useState(5);
   const [brushSoftness, setBrushSoftness] = useState(0);
+  const [isMapOwner, setIsMapOwner] = useState(true); // Default to true for creating a new map
   const api = useMemo(
     () =>
       new Api({
@@ -201,6 +202,7 @@ function App() {
           const loadedMap = normalizeMap(response);
           if (requestId !== mapLoadRequest.current) return;
           setCurrentMap(loadedMap);
+          setIsMapOwner(Boolean(currentUser?._id && String(loadedMap.owner) === String(currentUser._id)));
           setLoadedMapId(loadedMap._id);
           setMapLoadVersion((version) => version + 1);
           setMaps((currentMaps) =>
@@ -215,7 +217,7 @@ function App() {
           if (requestId === mapLoadRequest.current) setIsLoading(false);
         });
     },
-    [api],
+    [api, currentUser],
   );
 
   function handleMapLike(isLiked, mapId) {
@@ -223,11 +225,7 @@ function App() {
       setPopup({
         title: "Entre na sua conta",
         children: (
-          <IsNotAuthorized
-            message="Entre para curtir mapas."
-            showLoginLink
-            handleClosePopup={handleClosePopup}
-          />
+          <IsNotAuthorized message="Entre para curtir mapas." showLoginLink handleClosePopup={handleClosePopup} />
         ),
       });
       return;
@@ -323,11 +321,7 @@ function App() {
   }, [popup]);
 
   useEffect(() => {
-    if (
-      pathname === "/" &&
-      previousPathname.current !== "/" &&
-      currentMap.isSaved
-    ) {
+    if (pathname === "/" && previousPathname.current !== "/" && currentMap.isSaved) {
       setCurrentMap({ title: "New map", layers: [], likes: [], isSaved: false });
     }
     previousPathname.current = pathname;
@@ -402,11 +396,25 @@ function App() {
     setIsLayerPanelOpen((currentIsOpen) => (typeof nextIsOpen === "boolean" ? nextIsOpen : !currentIsOpen));
   }
 
+  function handleIsMapOwner(mapId = null) {
+    if (mapId == null) {
+      setIsMapOwner(true);
+      return;
+    }
+
+    const selectedMap = maps.find((map) => String(map._id) === String(mapId));
+    const isOwnerCheck = Boolean(
+      selectedMap && currentUser?._id && String(selectedMap.owner) === String(currentUser._id),
+    );
+    return setIsMapOwner(isOwnerCheck);
+  }
+
   const mapEditor = (
     <>
       <Main
         key={`${currentMap._id ?? "new-map"}-${mapLoadVersion}`}
         mapTitle={currentMap.title}
+        isMapOwner={isMapOwner}
         onSaveMap={handleSaveMap}
         onMapTitleChange={handleMapTitleChange}
         isSaving={isLoading}
@@ -421,18 +429,20 @@ function App() {
         selectTool={selectTool}
         layers={currentMap.layers}
       />
-      <Sidebar
-        handleArrowClick={handleArrowClick}
-        isOpen={isOpen.sidebar}
-        handleSelectTool={handleSelectTool}
-        onToggleLayers={handleToggleLayers}
-        isLayerPanelOpen={isLayerPanelOpen}
-        brushSize={brushSize}
-        onBrushSizeChange={setBrushSize}
-        brushSoftness={brushSoftness}
-        onBrushSoftnessChange={setBrushSoftness}
-        selectTool={selectTool}
-      />
+      {isMapOwner && (
+        <Sidebar
+          handleArrowClick={handleArrowClick}
+          isOpen={isOpen.sidebar}
+          handleSelectTool={handleSelectTool}
+          onToggleLayers={handleToggleLayers}
+          isLayerPanelOpen={isLayerPanelOpen}
+          brushSize={brushSize}
+          onBrushSizeChange={setBrushSize}
+          brushSoftness={brushSoftness}
+          onBrushSoftnessChange={setBrushSoftness}
+          selectTool={selectTool}
+        />
+      )}
     </>
   );
 
@@ -448,16 +458,17 @@ function App() {
       >
         <Header currentUser={currentUser} onLogout={handleLogout} />
         {!["/login", "/signup"].includes(pathname) && (
-          <Navigation handleArrowClick={handleArrowClick} isOpen={isOpen.navigation} />
+          <Navigation
+            handleArrowClick={handleArrowClick}
+            isOpen={isOpen.navigation}
+            handleIsMapOwner={handleIsMapOwner}
+          />
         )}
         <Routes>
           <Route
             path="/"
             element={
-              <ProtectedRoute
-                isLoggedIn={Boolean(currentUser)}
-                isLoading={isSessionLoading}
-              >
+              <ProtectedRoute isLoggedIn={Boolean(currentUser)} isLoading={isSessionLoading}>
                 {mapEditor}
               </ProtectedRoute>
             }
@@ -465,11 +476,7 @@ function App() {
           <Route
             path="/login"
             element={
-              <ProtectedRoute
-                isLoggedIn={Boolean(currentUser)}
-                isLoading={isSessionLoading}
-                anonymous
-              >
+              <ProtectedRoute isLoggedIn={Boolean(currentUser)} isLoading={isSessionLoading} anonymous>
                 <Login
                   popup={popup}
                   handleClosePopup={handleClosePopup}
@@ -482,11 +489,7 @@ function App() {
           <Route
             path="/signup"
             element={
-              <ProtectedRoute
-                isLoggedIn={Boolean(currentUser)}
-                isLoading={isSessionLoading}
-                anonymous
-              >
+              <ProtectedRoute isLoggedIn={Boolean(currentUser)} isLoading={isSessionLoading} anonymous>
                 <Register
                   popup={popup}
                   handleClosePopup={handleClosePopup}
@@ -507,16 +510,14 @@ function App() {
                 handleClosePopup={handleClosePopup}
                 onmapLike={handleMapLike}
                 onmapDelete={handleMapDelete}
+                handleIsMapOwner={handleIsMapOwner}
               />
             }
           />
           <Route
             path="/maps/:mapId"
             element={
-              <ProtectedRoute
-                isLoggedIn={Boolean(currentUser)}
-                isLoading={isSessionLoading}
-              >
+              <ProtectedRoute isLoggedIn={Boolean(currentUser)} isLoading={isSessionLoading}>
                 <MapDetailRoute loadMap={handleLoadMap} loadedMapId={loadedMapId}>
                   {mapEditor}
                 </MapDetailRoute>

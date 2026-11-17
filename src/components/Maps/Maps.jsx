@@ -3,7 +3,7 @@ import Popup from "../Popup/Popup";
 
 export default function Maps(props) {
   const { maps } = props;
-  const { handleOpenPopup, handleClosePopup, onmapLike, onmapDelete, popup } = props;
+  const { handleOpenPopup, handleClosePopup, onmapLike, onmapDelete, popup, handleIsMapOwner } = props;
   return (
     <div className="maps">
       <ul className="maps__list">
@@ -15,6 +15,7 @@ export default function Maps(props) {
             onmapLike={onmapLike}
             onmapDelete={onmapDelete}
             onClosePopup={handleClosePopup}
+            handleIsMapOwner={handleIsMapOwner}
           />
         ))}
       </ul>

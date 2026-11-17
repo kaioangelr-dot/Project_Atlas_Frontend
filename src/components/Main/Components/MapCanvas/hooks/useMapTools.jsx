@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import AddImage from "../../../../Popup/components/AddImage/AddImage";
 import PinPopup from "../../../../Popup/components/PinPopup/PinPopup";
+import PinReadOnlyPopup from "../../../../Popup/components/PinPopup/PinReadOnlyPopup";
 
 export default function useMapTools({
   selectTool,
@@ -14,6 +15,7 @@ export default function useMapTools({
   getMapPosition,
   startPanning,
   onOpen,
+  isMapOwner,
 }) {
   const [isDrawing, setIsDrawing] = useState(false);
   const [hoveredPinId, setHoveredPinId] = useState(null);
@@ -276,8 +278,12 @@ export default function useMapTools({
     if (event.evt.button !== 0 || wasDraggedRef.current) return;
 
     onOpen({
-      title: "Location Details",
-      children: <PinPopup pin={pin} onSave={(details) => handlePinDetailsSave(layerId, pin.id, details)} />,
+      title: isMapOwner ? "Location Details" : "Location",
+      children: isMapOwner ? (
+        <PinPopup pin={pin} onSave={(details) => handlePinDetailsSave(layerId, pin.id, details)} />
+      ) : (
+        <PinReadOnlyPopup pin={pin} />
+      ),
     });
   };
 

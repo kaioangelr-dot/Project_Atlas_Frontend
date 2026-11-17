@@ -61,6 +61,7 @@ function MapLayerContent({
   recordUndo,
   wasDraggedRef,
   onPinClick,
+  isMapOwner,
 }) {
   return (
     <>
@@ -165,7 +166,7 @@ function MapLayerContent({
             y={pin.y}
             scaleX={pinStyle.scale}
             scaleY={pinStyle.scale}
-            draggable
+            draggable={isMapOwner}
             onMouseDown={() => {
               wasDraggedRef.current = false;
             }}

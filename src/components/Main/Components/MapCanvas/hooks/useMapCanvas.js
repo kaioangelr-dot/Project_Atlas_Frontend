@@ -12,6 +12,7 @@ export default function useMapCanvas({
   selectTool,
   initialLayers,
   displayScale,
+  isMapOwner,
 }) {
   const mapLayers = useMapLayers(initialLayers);
   const viewport = useMapViewport(displayScale);
@@ -27,6 +28,7 @@ export default function useMapCanvas({
     getMapPosition: viewport.getMapPosition,
     startPanning: viewport.startPanning,
     onOpen,
+    isMapOwner,
   });
   const { undo } = mapLayers;
   const { cancelDrawing } = tools;

@@ -8,7 +8,7 @@
 
 ## Artwork
 
-The Atlas logos, Atlas character artwork, tools, cloud illustrations, etc... were drawn by the project author.
+The Atlas logos, Atla character artwork, tools, cloud illustrations, etc... were drawn by the project author.
 
 <p align="center">
   <img src="./src/images/atla-head.svg" alt="Atlas character artwork" height="100" />
@@ -29,6 +29,70 @@ The Atlas logos, Atlas character artwork, tools, cloud illustrations, etc... wer
 - Browse maps, like them, and delete maps you own.
 - Save new maps and update existing maps using the configured API. A preview is generated automatically from the map canvas.
 - Sign up and sign in with an email and password. Sign-up requires a matching password confirmation.
+
+## Future improvements and ideas
+
+The following ideas are possible future directions for Project Atlas and are not
+currently implemented.
+
+### Editing experience
+
+- [ ] Add move, resize, rotate, and transform controls for pins and labels.
+- [ ] Support selecting multiple map elements and editing or deleting them as a group.
+- [ ] Add copy, paste, and duplicate actions.
+- [ ] Improve the undo and redo system so it covers every editor action.
+- [ ] Add shape tools, dashed and custom brush styles, brush pressure, and a fill tool.
+- [ ] Add snapping, rulers, and guides for more precise map layouts.
+- [ ] Add keyboard shortcuts for saving, creating layers, toggling visibility, and zooming.
+- [ ] Provide context menus for renaming layers and editing or duplicating elements.
+- [ ] Add an autosave draft and explicit recovery for interrupted editing sessions.
+
+### Map authoring
+
+- [ ] Support custom map backgrounds, reusable assets, and externally hosted map tiles.
+- [ ] Add worldbuilding fields such as regions, factions, characters, points of interest,
+  relationships, and timeline events.
+- [ ] Add searchable map legends and filters for pins and locations.
+- [ ] Allow regions and routes to have custom colors, icons, descriptions, and categories.
+- [ ] Support collaborative editing with presence, permissions, comments, and live cursors.
+- [ ] Let users create map collections or campaigns containing multiple related maps.
+- [ ] Add templates for fantasy kingdoms, settlements, dungeons, and travel routes.
+- [ ] Support version history and named snapshots for maps.
+- [ ] Export maps as PNG, SVG, PDF, or JSON and import Project Atlas JSON maps.
+- [ ] Generate shareable public links with optional password protection or expiration.
+
+### Discovery and community
+
+- [ ] Add sorting and filtering for featured, newest, most reacted-to, and recently updated maps.
+- [ ] Add tags, map categories, full-text search, and user profiles.
+- [ ] Allow public or private sharing and configurable collaborator permissions.
+- [ ] Add map collections, favorites, and following between creators.
+- [ ] Add customizable emoji reactions to maps and comments, replacing the generic like button.
+- [ ] Add moderation tools for inappropriate public content and image URLs.
+- [ ] Improve empty, loading, error, offline, and unauthorized states.
+- [ ] Add a personalized loading animation with clear progress or status feedback.
+
+### Account and security
+
+- [ ] Add password reset, email verification, and account-management screens.
+- [ ] Improve session handling with refresh tokens and automatic session expiry feedback.
+- [ ] Add social sign-in and optional multi-factor authentication.
+- [ ] Add image upload validation, size limits, and server-side scanning.
+
+### Quality and technical improvements
+
+- [ ] Add a dark mode with a theme toggle and a saved user preference.
+- [ ] Introduce a typed data model or migrate to TypeScript.
+- [ ] Add unit and integration tests for the canvas, layers, tools, authentication, and API.
+- [ ] Add end-to-end tests for creating, saving, loading, reacting to, and deleting maps.
+- [ ] Configure CI to run linting, tests, and production builds on pull requests.
+- [ ] Split large components and hooks further and add an API/client error abstraction.
+- [ ] Replace fixed canvas coordinates with configurable canvas sizes and responsive defaults.
+- [ ] Optimize large maps through virtualization, object caching, and staged preview rendering.
+- [ ] Cache API responses, add request cancellation, and improve optimistic updates.
+- [ ] Improve accessibility with focus management, screen-reader labels, and keyboard use.
+- [ ] Audit mobile and tablet interactions, touch gestures, and small-screen layouts.
+- [ ] Add deployment configuration and environment-specific API documentation.
 
 ### Keyboard shortcuts
 
@@ -85,17 +149,17 @@ does not create a temporary or anonymous user.
 
 The frontend reads `VITE_API_URL` and expects the API to provide:
 
-| Method           | Endpoint             | Purpose              |
-| ---------------- | -------------------- | -------------------- |
-| `POST`           | `/signup`            | Create an account    |
+| Method           | Endpoint             | Purpose                 |
+| ---------------- | -------------------- | ----------------------- |
+| `POST`           | `/signup`            | Create an account       |
 | `POST`           | `/signin`            | Sign in and get a token |
-| `GET`            | `/users/me`          | Get the current user |
-| `GET`            | `/maps`              | List maps            |
-| `GET`            | `/maps/:mapId`       | Load a map           |
-| `POST`           | `/maps`              | Save a map           |
-| `PATCH`          | `/maps/:mapId`       | Update a map         |
-| `DELETE`         | `/maps/:mapId`       | Delete a map         |
-| `PUT` / `DELETE` | `/maps/:mapId/likes` | Like or unlike a map |
+| `GET`            | `/users/me`          | Get the current user    |
+| `GET`            | `/maps`              | List maps               |
+| `GET`            | `/maps/:mapId`       | Load a map              |
+| `POST`           | `/maps`              | Save a map              |
+| `PATCH`          | `/maps/:mapId`       | Update a map            |
+| `DELETE`         | `/maps/:mapId`       | Delete a map            |
+| `PUT` / `DELETE` | `/maps/:mapId/likes` | Like or unlike a map    |
 
 The API exchanges JSON and returns map records directly (a JSON array for
 `GET /maps`, one object for map detail/create/update). A saved map is submitted
@@ -145,7 +209,10 @@ Project_Atlas_Frontend
 │  │  │  │     ├─ components
 │  │  │  │     │  └─ mapcanvas
 │  │  │  │     │     ├─ CanvasControls.jsx
+│  │  │  │     │     ├─ createSaveMapHandler.jsx
 │  │  │  │     │     ├─ LayerPanel.jsx
+│  │  │  │     │     ├─ mapCanvasToolStyles.js
+│  │  │  │     │     ├─ MapLayerContent.jsx
 │  │  │  │     │     ├─ MapStage.jsx
 │  │  │  │     │     ├─ PinPreview.jsx
 │  │  │  │     │     └─ TextEditor.jsx
@@ -153,11 +220,14 @@ Project_Atlas_Frontend
 │  │  │  │     │  ├─ useMapCanvas.js
 │  │  │  │     │  ├─ useMapLayers.js
 │  │  │  │     │  ├─ useMapTools.jsx
-│  │  │  │     │  └─ useMapViewport.js
+│  │  │  │     │  ├─ useMapViewport.js
+│  │  │  │     │  └─ useStageDisplay.js
 │  │  │  │     ├─ mapcanvas.css
 │  │  │  │     └─ mapcanvas.jsx
 │  │  │  ├─ main.css
 │  │  │  └─ Main.jsx
+│  │  ├─ MapDetailRoute
+│  │  │  └─ MapDetailRoute.jsx
 │  │  ├─ Maps
 │  │  │  ├─ Map
 │  │  │  │  ├─ map.css
@@ -167,14 +237,24 @@ Project_Atlas_Frontend
 │  │  ├─ Navigation
 │  │  │  ├─ navigation.css
 │  │  │  └─ Navigation.jsx
+│  │  ├─ pages
+│  │  │  ├─ auth-pages.css
+│  │  │  ├─ Login.jsx
+│  │  │  └─ Register.jsx
 │  │  ├─ Popup
 │  │  │  ├─ components
 │  │  │  │  ├─ AddImage
 │  │  │  │  │  └─ AddImage.jsx
+│  │  │  │  ├─ InfoToolTip
+│  │  │  │  │  ├─ components
+│  │  │  │  │  │  ├─ IsAuthorized.jsx
+│  │  │  │  │  │  └─ IsNotAuthorized.jsx
+│  │  │  │  │  └─ InfoToolTip.jsx
 │  │  │  │  ├─ NewMap
 │  │  │  │  │  └─ NewMap.jsx
 │  │  │  │  ├─ PinPopup
-│  │  │  │  │  └─ PinPopup.jsx
+│  │  │  │  │  ├─ PinPopup.jsx
+│  │  │  │  │  └─ PinReadOnlyPopup.jsx
 │  │  │  │  ├─ PopupWithConfirmation
 │  │  │  │  │  └─ PopupWithConfirmation.jsx
 │  │  │  │  └─ SaveMap
@@ -184,6 +264,8 @@ Project_Atlas_Frontend
 │  │  ├─ Preloader
 │  │  │  ├─ preloader.css
 │  │  │  └─ Preloader.jsx
+│  │  ├─ ProtectedRoute
+│  │  │  └─ ProtectedRoute.jsx
 │  │  └─ Sidebar
 │  │     ├─ sidebar.css
 │  │     └─ Sidebar.jsx
@@ -202,6 +284,7 @@ Project_Atlas_Frontend
 │  │  ├─ delete-icon.svg
 │  │  ├─ edit.svg
 │  │  ├─ eraser.svg
+│  │  ├─ eye.svg
 │  │  ├─ github-icon.svg
 │  │  ├─ image.svg
 │  │  ├─ like-active.svg
@@ -211,15 +294,17 @@ Project_Atlas_Frontend
 │  │  ├─ pencil.svg
 │  │  ├─ pin.svg
 │  │  ├─ quill.png
+│  │  ├─ sign-background.png
+│  │  ├─ sign-background.png~
 │  │  ├─ zoom-less.svg
 │  │  └─ zoom-plus.svg
 │  ├─ index.css
 │  ├─ main.jsx
 │  ├─ utils
 │  │  ├─ api.js
-│  │  ├─ defaultMap.js
 │  │  ├─ imageUrl.js
-│  │  └─ mapCanvasConfig.js
+│  │  ├─ mapCanvasConfig.js
+│  │  └─ token.js
 │  ├─ variable.css
 │  └─ vendor
 │     ├─ fonts

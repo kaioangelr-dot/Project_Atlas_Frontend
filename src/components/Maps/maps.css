@@ -21,7 +21,7 @@
 
 .maps__list {
   padding: 100px 50px 0 50px;
-  column-gap: 25px;
+  gap: 25px;
   display: flex;
 }
 
@@ -29,6 +29,6 @@
   .maps__list {
     padding: 70px 20px 0 20px;
     flex-direction: column;
-    row-gap: 20px;
+    gap: 20px;
   }
 }

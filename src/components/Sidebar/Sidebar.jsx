@@ -56,7 +56,7 @@ export default function Sidebar(props) {
             aria-pressed={selectTool === "eraser"}
             onClick={() => handleSelectTool("eraser")}
           >
-            <img className="sidebar__image sidebar__image_eraser" src={eraser} alt="eraser" />
+            <img className="sidebar__image" src={eraser} alt="eraser" />
           </button>
         </li>
         {(selectTool === "pencil" || selectTool === "eraser") && (

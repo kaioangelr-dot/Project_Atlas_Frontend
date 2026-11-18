@@ -40,10 +40,6 @@
   width: 40px;
 }
 
-.sidebar__image_eraser {
-  width: 50px;
-}
-
 .sidebar__tool:hover {
   scale: 1.1;
   filter: var(--color-active-svg);

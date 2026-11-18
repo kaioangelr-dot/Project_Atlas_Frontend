@@ -1,4 +1,4 @@
-import author from "../../images/atla-head.svg";
+import author from "../../images/author.jpeg";
 
 export default function About() {
   return (
